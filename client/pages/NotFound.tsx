@@ -9,7 +9,7 @@ export default function NotFound() {
       <Card className="max-w-md w-full p-8 text-center space-y-6">
         <div className="space-y-4">
           <div className="flex justify-center">
-            <div className="p-4 bg-gradient-to-br from-primary to-accent rounded-xl">
+            <div className="p-4 bg-primary rounded-xl">
               <Dices className="w-12 h-12 text-white" />
             </div>
           </div>
