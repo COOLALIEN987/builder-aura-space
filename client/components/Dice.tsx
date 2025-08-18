@@ -56,9 +56,9 @@ const dotSizeClasses = {
 
 const variantClasses = {
   default: 'bg-card border-primary shadow-lg',
-  fire: 'bg-gradient-to-br from-red-500 to-orange-600 border-red-400 shadow-red-500/25',
-  ice: 'bg-gradient-to-br from-blue-400 to-cyan-500 border-blue-300 shadow-blue-400/25',
-  golden: 'bg-gradient-to-br from-yellow-400 to-amber-500 border-yellow-300 shadow-yellow-400/25'
+  fire: 'bg-red-500 border-red-400 shadow-red-500/25',
+  ice: 'bg-blue-400 border-blue-300 shadow-blue-400/25',
+  golden: 'bg-yellow-400 border-yellow-300 shadow-yellow-400/25'
 };
 
 export default function Dice({ 
