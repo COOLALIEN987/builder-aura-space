@@ -99,7 +99,7 @@ export default function MultiplayerDice({
 
         {/* Rolling overlay */}
         {isRolling && (
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 rounded-xl animate-pulse" />
+          <div className="absolute inset-0 bg-primary/20 rounded-xl animate-pulse" />
         )}
       </div>
 
