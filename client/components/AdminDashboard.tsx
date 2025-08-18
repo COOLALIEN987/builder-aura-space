@@ -281,7 +281,7 @@ export default function AdminDashboard({
                 </div>
                 <div className="w-full bg-muted rounded-full h-3">
                   <div
-                    className="h-full bg-gradient-to-r from-primary to-accent rounded-full transition-all duration-500"
+                    className="h-full bg-primary rounded-full transition-all duration-500"
                     style={{ width: `${(usedCount / 25) * 100}%` }}
                   />
                 </div>
