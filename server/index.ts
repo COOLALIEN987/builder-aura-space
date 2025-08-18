@@ -328,7 +328,9 @@ app.get("/api/game-state", (req, res) => {
 });
 
 // Export createServer for Vite development
-export const createServer = () => app;
+export function createServer() {
+  return app;
+}
 
 // Start server
 const PORT = process.env.PORT || 8080;
