@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Users, Shield, Gamepad2, Crown } from 'lucide-react';
+import { Users, Shield, Gamepad2, Crown, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface LobbyProps {
