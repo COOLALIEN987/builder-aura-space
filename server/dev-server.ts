@@ -270,6 +270,22 @@ const initializeSocketIO = () => {
       }
     });
 
+    socket.on('startGame', () => {
+      if (socket.id !== gameState.adminId) {
+        socket.emit('error', { message: 'Only admin can start the game' });
+        return;
+      }
+
+      if (gameState.phase !== 'lobby') {
+        socket.emit('error', { message: 'Game already started' });
+        return;
+      }
+
+      gameState.phase = 'waiting';
+      broadcastGameState();
+      console.log('🎮 Game started by admin');
+    });
+
     socket.on('disconnect', () => {
       const player = gameState.players[socket.id];
       if (player) {
