@@ -111,6 +111,10 @@ class SocketService {
     this.socket?.emit('getAvailableScenarios');
   }
 
+  startGame() {
+    this.socket?.emit('startGame');
+  }
+
   isConnected() {
     return this.socket?.connected || false;
   }
