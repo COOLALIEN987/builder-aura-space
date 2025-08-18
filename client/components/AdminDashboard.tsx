@@ -102,8 +102,8 @@ export default function AdminDashboard({
                 <Crown className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-foreground">Admin Dashboard</h1>
-                <p className="text-muted-foreground">Full control over the multiplayer game</p>
+                <h1 className="text-2xl font-bold text-foreground">Monopoly Madness - Admin</h1>
+                <p className="text-muted-foreground">Full control over the Monopoly Madness game</p>
               </div>
             </div>
             
