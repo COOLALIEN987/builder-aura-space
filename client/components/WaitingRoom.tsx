@@ -47,11 +47,11 @@ export default function WaitingRoom({ gameState, playerId }: WaitingRoomProps) {
             {/* Animated waiting indicator */}
             <div className="flex justify-center">
               <div className="relative">
-                <div className="w-20 h-20 rounded-xl border-4 border-muted animate-pulse bg-gradient-to-br from-primary/20 to-accent/20" />
+                <div className="w-20 h-20 rounded-xl border-4 border-muted animate-pulse bg-primary/20" />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-2xl font-bold text-muted-foreground">?</div>
                 </div>
-                <div className="absolute -inset-2 bg-gradient-to-r from-primary to-accent rounded-xl opacity-75 blur animate-pulse-glow" />
+                <div className="absolute -inset-2 bg-primary rounded-xl opacity-75 blur animate-pulse-glow" />
               </div>
             </div>
 
