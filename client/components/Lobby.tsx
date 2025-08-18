@@ -30,6 +30,11 @@ export default function Lobby({ onJoinGame, isConnecting, error }: LobbyProps) {
     }
   };
 
+  const handleQuickStart = () => {
+    // Auto-join as admin with default credentials to start game immediately
+    onJoinGame('Game Host', true, 'admin123');
+  };
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6">
