@@ -98,7 +98,7 @@ export default function AdminDashboard({
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="p-3 bg-gradient-to-br from-primary to-accent rounded-xl">
+              <div className="p-3 bg-primary rounded-xl">
                 <Crown className="w-8 h-8 text-white" />
               </div>
               <div>
