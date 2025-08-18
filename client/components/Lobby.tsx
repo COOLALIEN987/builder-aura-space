@@ -41,10 +41,10 @@ export default function Lobby({ onJoinGame, isConnecting, error }: LobbyProps) {
             </div>
           </div>
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Multiplayer Dice Game
+            <h1 className="text-3xl font-bold text-foreground">
+              Monopoly Madness
             </h1>
-            <p className="text-muted-foreground">Roll • Decide • Compete</p>
+            <p className="text-muted-foreground">Roll • Buy • Dominate</p>
           </div>
         </div>
 
