@@ -3,7 +3,7 @@ import { Server } from "socket.io";
 import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
-import { GameState, Player, gameScenarios, AnswerSubmission } from "@shared/gameData";
+import { GameState, Player, gameScenarios, AnswerSubmission } from "../shared/gameData";
 
 const app = express();
 const httpServer = createServer(app);
