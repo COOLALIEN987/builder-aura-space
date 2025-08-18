@@ -125,12 +125,6 @@ const initializeSocketIO = () => {
       };
 
       gameState.players[socket.id] = player;
-
-      // Auto-start game if this is a quick start admin (named "Game Host")
-      if (isAdmin && name === 'Game Host' && gameState.phase === 'lobby') {
-        gameState.phase = 'waiting';
-      }
-
       socket.emit('playerJoined', { playerId: socket.id, isAdmin });
       broadcastGameState();
 
