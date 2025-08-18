@@ -36,7 +36,7 @@ export default function Lobby({ onJoinGame, isConnecting, error }: LobbyProps) {
         {/* Header */}
         <div className="text-center space-y-4">
           <div className="flex justify-center">
-            <div className="p-4 bg-gradient-to-br from-primary to-accent rounded-xl">
+            <div className="p-4 bg-primary rounded-xl">
               <Gamepad2 className="w-12 h-12 text-white" />
             </div>
           </div>
