@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Users, Shield, Gamepad2, Crown } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Users, Shield, Gamepad2, Crown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface LobbyProps {
   onJoinGame: (name: string, isAdmin?: boolean, adminPassword?: string) => void;
@@ -14,9 +14,9 @@ interface LobbyProps {
 }
 
 export default function Lobby({ onJoinGame, isConnecting, error }: LobbyProps) {
-  const [playerName, setPlayerName] = useState('');
-  const [adminPassword, setAdminPassword] = useState('');
-  const [activeTab, setActiveTab] = useState('player');
+  const [playerName, setPlayerName] = useState("");
+  const [adminPassword, setAdminPassword] = useState("");
+  const [activeTab, setActiveTab] = useState("player");
 
   const handleJoinAsPlayer = () => {
     if (playerName.trim()) {
@@ -59,11 +59,17 @@ export default function Lobby({ onJoinGame, isConnecting, error }: LobbyProps) {
         <Card className="p-6">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="player" className="flex items-center space-x-2">
+              <TabsTrigger
+                value="player"
+                className="flex items-center space-x-2"
+              >
                 <Users className="w-4 h-4" />
                 <span>Player</span>
               </TabsTrigger>
-              <TabsTrigger value="admin" className="flex items-center space-x-2">
+              <TabsTrigger
+                value="admin"
+                className="flex items-center space-x-2"
+              >
                 <Shield className="w-4 h-4" />
                 <span>Admin</span>
               </TabsTrigger>
@@ -77,18 +83,18 @@ export default function Lobby({ onJoinGame, isConnecting, error }: LobbyProps) {
                   placeholder="Enter your name"
                   value={playerName}
                   onChange={(e) => setPlayerName(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleJoinAsPlayer()}
+                  onKeyPress={(e) => e.key === "Enter" && handleJoinAsPlayer()}
                   maxLength={20}
                 />
               </div>
-              
-              <Button 
+
+              <Button
                 onClick={handleJoinAsPlayer}
                 disabled={!playerName.trim() || isConnecting}
                 className="w-full"
                 size="lg"
               >
-                {isConnecting ? 'Joining...' : 'Join Game'}
+                {isConnecting ? "Joining..." : "Join Game"}
               </Button>
 
               <div className="text-xs text-muted-foreground text-center space-y-1">
@@ -119,20 +125,22 @@ export default function Lobby({ onJoinGame, isConnecting, error }: LobbyProps) {
                     placeholder="Enter admin password"
                     value={adminPassword}
                     onChange={(e) => setAdminPassword(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleJoinAsAdmin()}
+                    onKeyPress={(e) => e.key === "Enter" && handleJoinAsAdmin()}
                   />
                 </div>
               </div>
 
-              <Button 
+              <Button
                 onClick={handleJoinAsAdmin}
-                disabled={!playerName.trim() || !adminPassword.trim() || isConnecting}
+                disabled={
+                  !playerName.trim() || !adminPassword.trim() || isConnecting
+                }
                 className="w-full"
                 size="lg"
                 variant="outline"
               >
                 <Crown className="w-4 h-4 mr-2" />
-                {isConnecting ? 'Joining...' : 'Join as Admin'}
+                {isConnecting ? "Joining..." : "Join as Admin"}
               </Button>
 
               <div className="text-xs text-muted-foreground text-center space-y-1">

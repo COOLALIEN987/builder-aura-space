@@ -1,5 +1,5 @@
-import { io, Socket } from 'socket.io-client';
-import { GameState, AnswerSubmission } from '@shared/gameData';
+import { io, Socket } from "socket.io-client";
+import { GameState, AnswerSubmission } from "@shared/gameData";
 
 class SocketService {
   private socket: Socket | null = null;
@@ -9,44 +9,47 @@ class SocketService {
     if (this.socket) return;
 
     this.socket = io(window.location.origin, {
-      transports: ['websocket', 'polling']
+      transports: ["websocket", "polling"],
     });
 
-    this.socket.on('connect', () => {
-      console.log('Connected to game server');
+    this.socket.on("connect", () => {
+      console.log("Connected to game server");
     });
 
-    this.socket.on('disconnect', () => {
-      console.log('Disconnected from game server');
+    this.socket.on("disconnect", () => {
+      console.log("Disconnected from game server");
     });
 
-    this.socket.on('error', (error: { message: string }) => {
-      console.error('Socket error:', error.message);
-      this.emit('error', error);
+    this.socket.on("error", (error: { message: string }) => {
+      console.error("Socket error:", error.message);
+      this.emit("error", error);
     });
 
-    this.socket.on('gameState', (gameState: GameState) => {
-      this.emit('gameState', gameState);
+    this.socket.on("gameState", (gameState: GameState) => {
+      this.emit("gameState", gameState);
     });
 
-    this.socket.on('playerJoined', (data: { playerId: string; isAdmin: boolean }) => {
-      this.emit('playerJoined', data);
+    this.socket.on(
+      "playerJoined",
+      (data: { playerId: string; isAdmin: boolean }) => {
+        this.emit("playerJoined", data);
+      },
+    );
+
+    this.socket.on("playerAnswered", (data: any) => {
+      this.emit("playerAnswered", data);
     });
 
-    this.socket.on('playerAnswered', (data: any) => {
-      this.emit('playerAnswered', data);
+    this.socket.on("answerSubmitted", () => {
+      this.emit("answerSubmitted");
     });
 
-    this.socket.on('answerSubmitted', () => {
-      this.emit('answerSubmitted');
+    this.socket.on("eliminated", () => {
+      this.emit("eliminated");
     });
 
-    this.socket.on('eliminated', () => {
-      this.emit('eliminated');
-    });
-
-    this.socket.on('availableScenarios', (scenarios: number[]) => {
-      this.emit('availableScenarios', scenarios);
+    this.socket.on("availableScenarios", (scenarios: number[]) => {
+      this.emit("availableScenarios", scenarios);
     });
   }
 
@@ -78,41 +81,41 @@ class SocketService {
   private emit(event: string, data?: any) {
     const eventListeners = this.listeners.get(event);
     if (eventListeners) {
-      eventListeners.forEach(callback => callback(data));
+      eventListeners.forEach((callback) => callback(data));
     }
   }
 
   // Game actions
   joinGame(name: string, isAdmin = false, adminPassword?: string) {
-    this.socket?.emit('joinGame', { name, isAdmin, adminPassword });
+    this.socket?.emit("joinGame", { name, isAdmin, adminPassword });
   }
 
   rollDice(targetNumber: number) {
-    this.socket?.emit('rollDice', targetNumber);
+    this.socket?.emit("rollDice", targetNumber);
   }
 
   submitAnswer(answer: AnswerSubmission) {
-    this.socket?.emit('submitAnswer', answer);
+    this.socket?.emit("submitAnswer", answer);
   }
 
   eliminatePlayer(playerId: string) {
-    this.socket?.emit('eliminatePlayer', playerId);
+    this.socket?.emit("eliminatePlayer", playerId);
   }
 
   endQuestion() {
-    this.socket?.emit('endQuestion');
+    this.socket?.emit("endQuestion");
   }
 
   resetGame() {
-    this.socket?.emit('resetGame');
+    this.socket?.emit("resetGame");
   }
 
   getAvailableScenarios() {
-    this.socket?.emit('getAvailableScenarios');
+    this.socket?.emit("getAvailableScenarios");
   }
 
   startGame() {
-    this.socket?.emit('startGame');
+    this.socket?.emit("startGame");
   }
 
   isConnected() {
