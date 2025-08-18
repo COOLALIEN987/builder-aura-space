@@ -30,29 +30,29 @@ export default function GameStats({
       icon: Trophy,
       label: 'Win Rate',
       value: `${winRate}%`,
-      color: 'text-yellow-400',
-      bgColor: 'bg-yellow-400/10'
+      color: 'text-yellow-600',
+      bgColor: 'bg-yellow-100'
     },
     {
       icon: Target,
       label: 'Total Games',
       value: totalGames.toString(),
-      color: 'text-blue-400',
-      bgColor: 'bg-blue-400/10'
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-100'
     },
     {
       icon: Zap,
       label: 'Win Streak',
       value: streak.toString(),
-      color: 'text-green-400',
-      bgColor: 'bg-green-400/10'
+      color: 'text-green-600',
+      bgColor: 'bg-green-100'
     },
     {
       icon: Clock,
       label: 'Best Time',
       value: bestTime > 0 ? formatTime(bestTime) : '--',
-      color: 'text-purple-400',
-      bgColor: 'bg-purple-400/10'
+      color: 'text-red-600',
+      bgColor: 'bg-red-100'
     }
   ];
 
