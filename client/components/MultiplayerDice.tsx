@@ -69,11 +69,10 @@ export default function MultiplayerDice({
       {/* Main dice */}
       <div
         className={cn(
-          'relative rounded-xl border-4 flex items-center justify-center transition-all duration-300 font-bold bg-gradient-to-br from-card to-card/80',
+          'relative rounded-xl border-4 flex items-center justify-center transition-all duration-300 font-bold bg-card',
           sizeClasses[size],
           isRolling && 'animate-dice-roll border-primary shadow-lg shadow-primary/25',
-          !isRolling && 'border-border hover:border-primary/50 cursor-pointer',
-          'backdrop-blur-sm'
+          !isRolling && 'border-border hover:border-primary/50 cursor-pointer'
         )}
       >
         {/* Number display */}
