@@ -82,7 +82,7 @@ export default function GameStats({
                 </p>
               </div>
             </div>
-            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-20 h-20 bg-gradient-to-br from-primary/20 to-transparent rounded-full blur-xl" />
+            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-20 h-20 bg-primary/20 rounded-full blur-xl" />
           </div>
         );
       })}
