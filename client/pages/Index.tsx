@@ -145,7 +145,7 @@ export default function Index() {
                 <Sparkles className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                <h1 className="text-3xl font-bold text-primary">
                   Dice Decision Dash
                 </h1>
                 <p className="text-muted-foreground">Roll • Decide • Conquer</p>
