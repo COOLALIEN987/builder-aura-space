@@ -78,7 +78,7 @@ export default function MultiplayerDice({
       >
         {/* Number display */}
         <div className={cn(
-          'font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent',
+          'font-bold text-primary',
           isRolling && 'animate-bounce-in'
         )}>
           {currentValue}
