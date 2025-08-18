@@ -40,7 +40,7 @@ export default function WaitingRoom({ gameState, playerId }: WaitingRoomProps) {
                 Wait till the dice are rolled{dots}
               </h1>
               <p className="text-muted-foreground text-lg">
-                The admin will roll the dice to reveal your next challenge
+                The admin will roll the dice to reveal your next Monopoly challenge
               </p>
             </div>
 
