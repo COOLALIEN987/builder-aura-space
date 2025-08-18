@@ -34,6 +34,11 @@ function expressPlugin(): Plugin {
 
       // Add Express app as middleware to Vite dev server
       server.middlewares.use(app);
+
+      // Enable Socket.IO by upgrading HTTP connections
+      server.httpServer?.on('upgrade', (request, socket, head) => {
+        httpServer.emit('upgrade', request, socket, head);
+      });
     },
   };
 }
