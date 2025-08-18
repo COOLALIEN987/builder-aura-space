@@ -60,7 +60,7 @@ export default function MultiplayerDice({
       {isRolling && (
         <div className="absolute inset-0 animate-pulse-glow">
           <div className={cn(
-            'rounded-xl bg-gradient-to-br from-primary/50 to-accent/50 blur-xl',
+            'rounded-xl bg-primary/50 blur-xl',
             sizeClasses[size]
           )} />
         </div>
