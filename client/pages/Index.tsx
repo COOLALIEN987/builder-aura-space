@@ -190,7 +190,7 @@ export default function Index() {
           </div>
           <div className="w-full bg-muted rounded-full h-3 overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-primary to-accent transition-all duration-500 ease-out"
+              className="h-full bg-primary transition-all duration-500 ease-out"
               style={{ width: `${Math.min(progressPercentage, 100)}%` }}
             />
           </div>
