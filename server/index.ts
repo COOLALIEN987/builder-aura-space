@@ -327,6 +327,9 @@ app.get("/api/game-state", (req, res) => {
   res.json(gameState);
 });
 
+// Export createServer for Vite development
+export const createServer = () => app;
+
 // Start server
 const PORT = process.env.PORT || 8080;
 httpServer.listen(PORT, () => {
