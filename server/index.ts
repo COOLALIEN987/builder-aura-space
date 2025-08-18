@@ -335,7 +335,7 @@ export function createServer() {
 // Start server
 const PORT = process.env.PORT || 8080;
 httpServer.listen(PORT, () => {
-  console.log(`🎲 Multiplayer Dice Game server running on port ${PORT}`);
+  console.log(`🎲 Monopoly Madness server running on port ${PORT}`);
   console.log(`🎯 Admin password: ${gameState.settings.adminPassword}`);
 });
 
