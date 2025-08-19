@@ -14,15 +14,17 @@ interface TeamAuthProps {
   error: string | null;
 }
 
-export default function TeamAuth({ 
-  onTeamLogin, 
-  onAdminLogin, 
-  isConnecting, 
-  error 
+export default function TeamAuth({
+  onTeamLogin,
+  onAdminLogin,
+  isConnecting,
+  error
 }: TeamAuthProps) {
   const [teamName, setTeamName] = useState('');
   const [playerName, setPlayerName] = useState('');
   const [activeTab, setActiveTab] = useState('login');
+  const [showAdminPrompt, setShowAdminPrompt] = useState(false);
+  const [adminPassword, setAdminPassword] = useState('');
 
   const handleTeamSubmit = (isSignup: boolean) => {
     if (teamName.trim() && playerName.trim()) {
