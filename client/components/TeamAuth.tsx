@@ -68,18 +68,26 @@ export default function TeamAuth({
           ) : (
             <div className="flex items-center space-x-2">
               <Input
+                type="text"
+                placeholder="Username"
+                value={adminUsername}
+                onChange={(e) => setAdminUsername(e.target.value)}
+                className="w-28"
+                size="sm"
+              />
+              <Input
                 type="password"
-                placeholder="Admin password"
+                placeholder="Password"
                 value={adminPassword}
                 onChange={(e) => setAdminPassword(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleAdminSubmit()}
-                className="w-32"
+                className="w-28"
                 size="sm"
               />
               <Button
                 size="sm"
                 onClick={handleAdminSubmit}
-                disabled={!adminPassword.trim() || isConnecting}
+                disabled={!adminUsername.trim() || !adminPassword.trim() || isConnecting}
               >
                 Login
               </Button>
@@ -167,7 +175,7 @@ export default function TeamAuth({
 
               <div className="text-xs text-muted-foreground text-center space-y-1">
                 <p>• Wait for scenarios to be revealed</p>
-                <p>• Work together with your team</p>
+                <p>�� Work together with your team</p>
                 <p>• Answer within the time limit</p>
               </div>
             </TabsContent>
