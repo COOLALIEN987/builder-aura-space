@@ -121,9 +121,9 @@ export default function MultiplayerGame() {
     handleJoinGame(playerNameInput, false, undefined, teamNameInput);
   };
 
-  const handleAdminLogin = () => {
+  const handleAdminLogin = (password: string) => {
     setUserType('admin');
-    handleJoinGame('Game Admin', true, 'admin123');
+    handleJoinGame('Game Admin', true, password);
   };
 
   const handleRollDice = (targetNumber: number) => {
