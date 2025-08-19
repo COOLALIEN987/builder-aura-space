@@ -104,16 +104,13 @@ const initializeSocketIO = () => {
         const { name, isAdmin = false, adminPassword } = data;
 
         if (isAdmin) {
-          if (adminPassword !== gameState.settings.adminPassword) {
-            socket.emit("error", { message: "Invalid admin password" });
-            return;
-          }
-          if (gameState.adminId && gameState.adminId !== socket.id) {
-            socket.emit("error", { message: "Admin already exists" });
-            return;
-          }
-          gameState.adminId = socket.id;
+        if (adminPassword !== gameState.settings.adminPassword) {
+          socket.emit("error", { message: "Invalid admin password" });
+          return;
         }
+        // Always allow new admin (override existing one for direct access)
+        gameState.adminId = socket.id;
+      }
 
         const playerCount = Object.keys(gameState.players).length;
         if (!isAdmin && playerCount >= gameState.settings.maxPlayers) {
