@@ -234,7 +234,7 @@ export default function AdminDashboard({
                   <div className="space-y-4">
                     <div>
                       <div className="text-sm font-medium text-primary">
-                        Scenario #{currentScenario.id}
+                        Dice: {gameState.diceResult} | Scenario #{currentScenario.id}
                       </div>
                       <div className="font-semibold">{currentScenario.title}</div>
                     </div>
