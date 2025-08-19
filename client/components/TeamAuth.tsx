@@ -24,6 +24,7 @@ export default function TeamAuth({
   const [playerName, setPlayerName] = useState('');
   const [activeTab, setActiveTab] = useState('login');
   const [showAdminPrompt, setShowAdminPrompt] = useState(false);
+  const [adminUsername, setAdminUsername] = useState('');
   const [adminPassword, setAdminPassword] = useState('');
 
   const handleTeamSubmit = (isSignup: boolean) => {
