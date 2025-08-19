@@ -57,14 +57,14 @@ export default function MultiplayerGame() {
       setIsSubmitting(false);
       toast({
         title: "Answer Submitted",
-        description: "Your answer has been recorded successfully!",
+        description: "Your team's answer has been recorded successfully!",
       });
     });
 
     socketService.on('eliminated', () => {
       toast({
-        title: "You've been eliminated",
-        description: "You can still watch the game continue.",
+        title: "Team eliminated",
+        description: "Your team has been eliminated from the game.",
         variant: "destructive",
       });
     });
@@ -148,8 +148,6 @@ export default function MultiplayerGame() {
     setPlayerAnswers([]);
   };
 
-  // No auto-join - wait for user choice
-
   // Show team auth if not connected
   if (!playerId || !gameState) {
     if (userType === null) {
@@ -162,7 +160,7 @@ export default function MultiplayerGame() {
         />
       );
     }
-
+    
     // Show loading while connecting
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -178,7 +176,7 @@ export default function MultiplayerGame() {
     );
   }
 
-  const currentScenario = gameState.currentScenario
+  const currentScenario = gameState.currentScenario 
     ? gameScenarios.find(s => s.id === gameState.currentScenario)
     : null;
 
@@ -186,77 +184,6 @@ export default function MultiplayerGame() {
   const hasSubmitted = currentPlayer && gameState.currentScenario
     ? currentPlayer.answers.some(a => a.scenarioId === gameState.currentScenario)
     : false;
-
-  // Show task view for teams when scenario is active
-  if (gameState.phase === 'question' && currentScenario && userType === 'team') {
-    return (
-      <TeamTaskView
-        scenario={currentScenario}
-        timeLeft={timeLeft}
-        onSubmitAnswer={handleSubmitAnswer}
-        hasSubmitted={hasSubmitted}
-        isSubmitting={isSubmitting}
-        teamName={teamName}
-        playerName={playerName}
-        diceResult={gameState.diceResult || 0}
-      />
-    );
-  }
-
-  // Show admin control panel
-  return (
-    <AdminDashboard
-      gameState={gameState}
-      playerId={playerId}
-      onRollDice={handleRollDice}
-      onEliminatePlayer={handleEliminatePlayer}
-      onEndQuestion={handleEndQuestion}
-      onResetGame={handleResetGame}
-      availableScenarios={availableScenarios}
-      playerAnswers={playerAnswers}
-    />
-  );
-
-  // Show elimination screen
-  if (currentPlayer?.eliminated) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <Card className="max-w-md w-full p-8 text-center space-y-6">
-          <div className="space-y-4">
-            <div className="flex justify-center">
-              <div className="p-4 bg-red-500/20 rounded-xl">
-                <AlertTriangle className="w-12 h-12 text-red-400" />
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <h1 className="text-2xl font-bold text-foreground">You've been eliminated</h1>
-              <p className="text-muted-foreground">
-                You can still watch the game continue, but you can't participate anymore.
-              </p>
-            </div>
-
-            <div className="text-sm text-muted-foreground">
-              Final Score: {currentPlayer.score} points
-            </div>
-          </div>
-        </Card>
-      </div>
-    );
-  }
-
-  // Show question if active
-  if (gameState.phase === 'question' && currentScenario) {
-    return (
-      <QuestionDisplay
-        scenario={currentScenario}
-        timeLeft={timeLeft}
-        onSubmitAnswer={handleSubmitAnswer}
-        hasSubmitted={hasSubmitted}
-        isSubmitting={isSubmitting}
-      />
-    );
-  }
 
   // Show dice rolling animation
   if (gameState.phase === 'rolling') {
@@ -279,47 +206,103 @@ export default function MultiplayerGame() {
           />
 
           <div className="text-sm text-muted-foreground">
-            Prepare yourself for the upcoming scenario
+            Prepare for the upcoming scenario
           </div>
         </div>
       </div>
     );
   }
 
-  // Show results briefly
-  if (gameState.phase === 'results' && currentScenario) {
+  // Show task view for teams when scenario is active
+  if (gameState.phase === 'question' && currentScenario && userType === 'team') {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <Card className="max-w-2xl w-full p-8 text-center space-y-6">
-          <div className="space-y-4">
-            <h1 className="text-3xl font-bold text-foreground">
-              Time's Up!
-            </h1>
-            <p className="text-muted-foreground">
-              All answers for "{currentScenario.title}" have been collected.
-            </p>
-          </div>
-
-          <div className="p-6 bg-muted rounded-xl">
-            <div className="text-sm text-muted-foreground mb-2">Your Status:</div>
-            <div className="text-lg font-semibold">
-              {hasSubmitted ? '✅ Answer Submitted' : '⏰ Time Expired'}
-            </div>
-          </div>
-
-          <div className="text-sm text-muted-foreground">
-            Returning to waiting room...
-          </div>
-        </Card>
-      </div>
+      <TeamTaskView
+        scenario={currentScenario}
+        timeLeft={timeLeft}
+        onSubmitAnswer={handleSubmitAnswer}
+        hasSubmitted={hasSubmitted}
+        isSubmitting={isSubmitting}
+        teamName={teamName}
+        playerName={playerName}
+        diceResult={gameState.diceResult || 0}
+      />
     );
   }
 
-  // Default: Show waiting room
+  // Show different views based on user type
+  if (userType === 'admin') {
+    return (
+      <AdminDashboard
+        gameState={gameState}
+        playerId={playerId}
+        onRollDice={handleRollDice}
+        onEliminatePlayer={handleEliminatePlayer}
+        onEndQuestion={handleEndQuestion}
+        onResetGame={handleResetGame}
+        availableScenarios={availableScenarios}
+        playerAnswers={playerAnswers}
+      />
+    );
+  }
+
+  // Team waiting screen
   return (
-    <WaitingRoom
-      gameState={gameState}
-      playerId={playerId}
-    />
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div className="max-w-2xl w-full space-y-6">
+        <div className="text-center space-y-4">
+          <h1 className="text-3xl font-bold text-foreground">Monopoly Madness</h1>
+          <p className="text-muted-foreground">Team Challenge Arena</p>
+        </div>
+
+        <div className="bg-card border rounded-xl p-6 space-y-4">
+          <div className="text-center space-y-2">
+            <div className="text-lg font-semibold text-foreground">Team: {teamName}</div>
+            <div className="text-muted-foreground">Player: {playerName}</div>
+          </div>
+
+          <div className="text-center space-y-4">
+            {gameState.phase === 'rolling' ? (
+              <>
+                <div className="text-xl font-bold text-foreground">🎲 Dice is rolling...</div>
+                <div className="text-muted-foreground">Get ready for your challenge!</div>
+              </>
+            ) : gameState.phase === 'results' ? (
+              <>
+                <div className="text-xl font-bold text-foreground">📊 Reviewing answers...</div>
+                <div className="text-muted-foreground">Results coming up next!</div>
+              </>
+            ) : (
+              <>
+                <div className="text-xl font-bold text-foreground">⏳ Waiting for admin...</div>
+                <div className="text-muted-foreground">The admin will roll the dice soon to reveal your next challenge</div>
+              </>
+            )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 text-center text-sm">
+            <div>
+              <div className="font-semibold text-primary">{gameState.usedScenarios.length}/25</div>
+              <div className="text-muted-foreground">Completed</div>
+            </div>
+            <div>
+              <div className="font-semibold text-primary">{25 - gameState.usedScenarios.length}</div>
+              <div className="text-muted-foreground">Remaining</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-card border rounded-xl p-4">
+          <div className="text-center space-y-2">
+            <h3 className="font-semibold text-foreground">Team Instructions</h3>
+            <div className="text-xs text-muted-foreground space-y-1">
+              <p>• Work together with your team members</p>
+              <p>• You'll have 1 minute to answer each challenge</p>
+              <p>• Discuss options before submitting your final answer</p>
+              <p>• Only one answer per team - make it count!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
