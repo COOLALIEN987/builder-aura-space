@@ -119,14 +119,15 @@ const initializeSocketIO = () => {
         }
 
         const player: Player = {
-          id: socket.id,
-          name,
-          isAdmin,
-          connected: true,
-          answers: [],
-          score: 0,
-          eliminated: false,
-        };
+        id: socket.id,
+        name,
+        teamName: teamName,
+        isAdmin,
+        connected: true,
+        answers: [],
+        score: 0,
+        eliminated: false,
+      };
 
         gameState.players[socket.id] = player;
         socket.emit("playerJoined", { playerId: socket.id, isAdmin });
