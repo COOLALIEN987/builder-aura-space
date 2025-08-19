@@ -78,14 +78,15 @@ export default function Dice({
         setRollCount(prev => {
           const newCount = prev + 1;
           setCurrentValue(Math.floor(Math.random() * 6) + 1);
-          
+
           if (newCount >= 8) {
             clearInterval(rollInterval);
-            const finalValue = Math.floor(Math.random() * 6) + 1;
+            // Always return the initial value passed to component (1-6)
+            const finalValue = Math.min(Math.max(value, 1), 6);
             setCurrentValue(finalValue);
             setTimeout(() => onRollComplete?.(finalValue), 100);
           }
-          
+
           return newCount;
         });
       }, 80);
