@@ -114,6 +114,18 @@ export default function MultiplayerGame() {
     socketService.joinGame(name, isAdminJoin, adminPassword);
   };
 
+  const handleTeamLogin = (teamNameInput: string, playerNameInput: string) => {
+    setTeamName(teamNameInput);
+    setPlayerName(playerNameInput);
+    setUserType('team');
+    handleJoinGame(playerNameInput, false);
+  };
+
+  const handleAdminLogin = () => {
+    setUserType('admin');
+    handleJoinGame('Game Admin', true, 'admin123');
+  };
+
   const handleRollDice = (targetNumber: number) => {
     socketService.rollDice(targetNumber);
   };
