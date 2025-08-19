@@ -83,8 +83,9 @@ export default function TeamTaskView({
               </div>
             </div>
             <div className="text-right">
-              <div className="text-sm text-muted-foreground">Dice Result</div>
+              <div className="text-sm text-muted-foreground">Dice Rolled</div>
               <div className="text-2xl font-bold text-primary">{diceResult}</div>
+              <div className="text-xs text-muted-foreground">Scenario #{scenario.id}</div>
             </div>
           </div>
         </Card>
