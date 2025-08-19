@@ -163,8 +163,10 @@ const initializeSocketIO = () => {
       broadcastGameState();
 
       setTimeout(() => {
-        gameState.diceResult = targetNumber;
-        gameState.currentScenario = targetNumber;
+        // Dice shows 1-6 but scenario is what admin selected
+        const diceValue = Math.floor(Math.random() * 6) + 1;
+        gameState.diceResult = diceValue;
+        gameState.currentScenario = targetNumber; // Admin's selected scenario
         gameState.usedScenarios.push(targetNumber);
         gameState.isRolling = false;
         gameState.phase = "question";
@@ -172,6 +174,7 @@ const initializeSocketIO = () => {
 
         broadcastGameState();
         questionTimer = setTimeout(endQuestion, 60000);
+        console.log(`🎲 Dice rolled: ${diceValue}, Scenario: ${targetNumber}`);
       }, 3000);
     });
 
