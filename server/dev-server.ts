@@ -100,8 +100,8 @@ const initializeSocketIO = () => {
 
     socket.on(
       "joinGame",
-      (data: { name: string; isAdmin?: boolean; adminPassword?: string }) => {
-        const { name, isAdmin = false, adminPassword } = data;
+      (data: { name: string; isAdmin?: boolean; adminPassword?: string; teamName?: string }) => {
+        const { name, isAdmin = false, adminPassword, teamName } = data;
 
         if (isAdmin) {
         if (adminPassword !== gameState.settings.adminPassword) {
