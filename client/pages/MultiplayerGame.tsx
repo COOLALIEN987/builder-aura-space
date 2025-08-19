@@ -136,14 +136,23 @@ export default function MultiplayerGame() {
     setPlayerAnswers([]);
   };
 
-  // Show lobby if not joined
+  // Auto-join as admin if not connected
+  useEffect(() => {
+    if (!playerId && !isConnecting) {
+      setIsConnecting(true);
+      handleJoinGame('Game Admin', true, 'admin123');
+    }
+  }, [playerId, isConnecting]);
+
+  // Show loading while connecting
   if (!playerId || !gameState) {
     return (
-      <Lobby
-        onJoinGame={handleJoinGame}
-        isConnecting={isConnecting}
-        error={error}
-      />
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="text-center space-y-4">
+          <div className="text-2xl font-bold text-foreground">Loading Monopoly Madness...</div>
+          <div className="text-muted-foreground">Setting up your game control panel</div>
+        </div>
+      </div>
     );
   }
 
