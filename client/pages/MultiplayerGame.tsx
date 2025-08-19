@@ -21,6 +21,9 @@ export default function MultiplayerGame() {
     answer: any;
   }>>([]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [teamName, setTeamName] = useState<string>('');
+  const [playerName, setPlayerName] = useState<string>('');
+  const [userType, setUserType] = useState<'team' | 'admin' | null>(null);
 
   // Initialize socket connection
   useEffect(() => {
