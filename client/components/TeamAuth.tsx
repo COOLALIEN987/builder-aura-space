@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 
 interface TeamAuthProps {
   onTeamLogin: (teamName: string, playerName: string) => void;
-  onAdminLogin: () => void;
+  onAdminLogin: (password: string) => void;
   isConnecting: boolean;
   error: string | null;
 }
