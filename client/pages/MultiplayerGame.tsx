@@ -136,7 +136,10 @@ export default function MultiplayerGame() {
   useEffect(() => {
     if (!playerId && !isConnecting) {
       setIsConnecting(true);
-      handleJoinGame('Game Admin', true, 'admin123');
+      // Add a small delay to ensure server is ready
+      setTimeout(() => {
+        handleJoinGame('Game Admin', true, 'admin123');
+      }, 500);
     }
   }, [playerId, isConnecting]);
 
