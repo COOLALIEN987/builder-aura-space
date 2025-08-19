@@ -29,7 +29,8 @@ let gameState: GameState = {
   players: {},
   adminId: null,
   settings: {
-    adminPassword: "admin123",
+    adminUsername: "MM_access",
+    adminPassword: "PES_ludo@123",
     maxPlayers: 50,
   },
 };
