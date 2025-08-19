@@ -108,22 +108,22 @@ export default function MultiplayerGame() {
     }
   }, [isAdmin, gameState?.usedScenarios]);
 
-  const handleJoinGame = (name: string, isAdminJoin = false, adminPassword?: string, teamName?: string) => {
+  const handleJoinGame = (name: string, isAdminJoin = false, adminUsername?: string, adminPassword?: string, teamName?: string) => {
     setIsConnecting(true);
     setError(null);
-    socketService.joinGame(name, isAdminJoin, adminPassword, teamName);
+    socketService.joinGame(name, isAdminJoin, adminUsername, adminPassword, teamName);
   };
 
   const handleTeamLogin = (teamNameInput: string, playerNameInput: string) => {
     setTeamName(teamNameInput);
     setPlayerName(playerNameInput);
     setUserType('team');
-    handleJoinGame(playerNameInput, false, undefined, teamNameInput);
+    handleJoinGame(playerNameInput, false, undefined, undefined, teamNameInput);
   };
 
-  const handleAdminLogin = (password: string) => {
+  const handleAdminLogin = (username: string, password: string) => {
     setUserType('admin');
-    handleJoinGame('Game Admin', true, password);
+    handleJoinGame('Game Admin', true, username, password);
   };
 
   const handleRollDice = (targetNumber: number) => {
