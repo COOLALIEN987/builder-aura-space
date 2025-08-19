@@ -337,6 +337,7 @@ export interface GameState {
   players: Record<string, Player>;
   adminId: string | null;
   settings: {
+    adminUsername: string;
     adminPassword: string;
     maxPlayers: number;
   };
