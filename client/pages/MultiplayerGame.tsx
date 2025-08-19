@@ -182,63 +182,24 @@ export default function MultiplayerGame() {
     ? gameScenarios.find(s => s.id === gameState.currentScenario)
     : null;
 
-  // Always show admin dashboard with current scenario visible to all
-  if (gameState.phase === 'question' && currentScenario) {
-    // Show the current scenario to all participants
+  const currentPlayer = gameState.players[playerId];
+  const hasSubmitted = currentPlayer && gameState.currentScenario
+    ? currentPlayer.answers.some(a => a.scenarioId === gameState.currentScenario)
+    : false;
+
+  // Show task view for teams when scenario is active
+  if (gameState.phase === 'question' && currentScenario && userType === 'team') {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="max-w-4xl mx-auto p-4 space-y-6">
-          <div className="text-center py-6">
-            <h1 className="text-3xl font-bold text-foreground mb-2">Monopoly Madness</h1>
-            <p className="text-muted-foreground">Current Challenge for All Teams</p>
-          </div>
-
-          <div className="bg-card border rounded-xl p-6">
-            <div className="text-center space-y-4">
-              <div className="text-primary font-bold text-lg">Dice Rolled: {gameState.diceResult}</div>
-              <div className="text-2xl font-bold text-foreground">{currentScenario.title}</div>
-            </div>
-
-            <div className="space-y-6 mt-6">
-              <div>
-                <h3 className="text-lg font-semibold text-foreground mb-3">Scenario:</h3>
-                <p className="text-muted-foreground bg-muted p-4 rounded-lg">
-                  {currentScenario.scenario}
-                </p>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-semibold text-foreground mb-3">Task:</h3>
-                <p className="text-foreground font-medium bg-primary/10 p-4 rounded-lg border border-primary/20">
-                  {currentScenario.task}
-                </p>
-              </div>
-
-              {currentScenario.type === 'mcq' && currentScenario.options && (
-                <div>
-                  <h3 className="text-lg font-semibold text-foreground mb-3">Options:</h3>
-                  <div className="space-y-2">
-                    {currentScenario.options.map((option, index) => (
-                      <div key={index} className="p-3 bg-muted rounded-lg border">
-                        <span className="font-medium">{option}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              <div className="text-center">
-                <div className="text-lg font-semibold text-primary">
-                  Time Remaining: {Math.max(0, timeLeft)} seconds
-                </div>
-                <div className="text-sm text-muted-foreground mt-2">
-                  Discuss with your teams and prepare your answers!
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <TeamTaskView
+        scenario={currentScenario}
+        timeLeft={timeLeft}
+        onSubmitAnswer={handleSubmitAnswer}
+        hasSubmitted={hasSubmitted}
+        isSubmitting={isSubmitting}
+        teamName={teamName}
+        playerName={playerName}
+        diceResult={gameState.diceResult || 0}
+      />
     );
   }
 
