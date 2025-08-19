@@ -45,6 +45,7 @@ export default function TeamAuth({
 
   const handleCancelAdmin = () => {
     setShowAdminPrompt(false);
+    setAdminUsername('');
     setAdminPassword('');
   };
 
