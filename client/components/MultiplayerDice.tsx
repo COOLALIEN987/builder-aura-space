@@ -109,7 +109,7 @@ export default function MultiplayerDice({
       {!isRolling && (
         <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2">
           <div className="text-xs text-muted-foreground bg-card px-2 py-1 rounded border">
-            1-25
+            1-6
           </div>
         </div>
       )}
