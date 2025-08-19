@@ -184,21 +184,30 @@ export default function AdminDashboard({
                       <label className="text-sm font-medium text-muted-foreground">
                         Select Scenario (1-25):
                       </label>
-                      <div className="grid grid-cols-5 gap-2 mt-2">
+                      <div className="grid grid-cols-5 gap-2 mt-2 max-h-32 overflow-y-auto">
                         {availableScenarios.map((num) => (
                           <Button
                             key={num}
                             variant={selectedScenario === num ? "default" : "outline"}
                             size="sm"
                             onClick={() => setSelectedScenario(num)}
-                            className="aspect-square"
+                            className="aspect-square text-xs"
                           >
                             {num}
                           </Button>
                         ))}
                       </div>
                     </div>
-                    
+
+                    <div className="bg-muted p-3 rounded-lg">
+                      <div className="text-xs text-muted-foreground mb-2">How it works:</div>
+                      <div className="text-xs text-muted-foreground space-y-1">
+                        <div>• Dice shows 1-6 (traditional dice)</div>
+                        <div>• Teams see dice result + selected scenario</div>
+                        <div>• All 25 scenarios available to choose from</div>
+                      </div>
+                    </div>
+
                     <Button
                       onClick={handleRollDice}
                       disabled={!selectedScenario}
@@ -206,7 +215,7 @@ export default function AdminDashboard({
                       size="lg"
                     >
                       <Dice6 className="w-4 h-4 mr-2" />
-                      Roll Dice → {selectedScenario || '?'}
+                      Roll Dice (1-6) → Scenario {selectedScenario || '?'}
                     </Button>
                   </div>
                 ) : (
