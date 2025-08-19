@@ -136,16 +136,7 @@ export default function MultiplayerGame() {
     setPlayerAnswers([]);
   };
 
-  // Auto-join as admin if not connected
-  useEffect(() => {
-    if (!playerId && !isConnecting) {
-      setIsConnecting(true);
-      // Add a small delay to ensure server is ready
-      setTimeout(() => {
-        handleJoinGame('Game Admin', true, 'admin123');
-      }, 500);
-    }
-  }, [playerId, isConnecting]);
+  // No auto-join - wait for user choice
 
   // Show loading while connecting
   if (!playerId || !gameState) {
