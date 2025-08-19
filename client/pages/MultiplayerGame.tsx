@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { socketService } from '@/services/socket';
 import { GameState, gameScenarios, AnswerSubmission } from '@shared/gameData';
-// Lobby removed - direct admin access
+import TeamAuth from '@/components/TeamAuth';
+import TeamTaskView from '@/components/TeamTaskView';
 import AdminDashboard from '@/components/AdminDashboard';
 import MultiplayerDice from '@/components/MultiplayerDice';
 import { toast } from '@/hooks/use-toast';
