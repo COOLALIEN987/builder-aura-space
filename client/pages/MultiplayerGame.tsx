@@ -118,7 +118,7 @@ export default function MultiplayerGame() {
     setTeamName(teamNameInput);
     setPlayerName(playerNameInput);
     setUserType('team');
-    handleJoinGame(playerNameInput, false);
+    handleJoinGame(playerNameInput, false, undefined, teamNameInput);
   };
 
   const handleAdminLogin = () => {
