@@ -2,13 +2,9 @@ import { useState, useEffect } from 'react';
 import { socketService } from '@/services/socket';
 import { GameState, gameScenarios, AnswerSubmission } from '@shared/gameData';
 // Lobby removed - direct admin access
-import WaitingRoom from '@/components/WaitingRoom';
 import AdminDashboard from '@/components/AdminDashboard';
-import QuestionDisplay from '@/components/QuestionDisplay';
 import MultiplayerDice from '@/components/MultiplayerDice';
-import { Card } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
-import { Gamepad2, AlertTriangle } from 'lucide-react';
 
 export default function MultiplayerGame() {
   const [gameState, setGameState] = useState<GameState | null>(null);
