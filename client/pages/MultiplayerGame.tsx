@@ -156,15 +156,9 @@ export default function MultiplayerGame() {
     );
   }
 
-  const currentPlayer = gameState.players[playerId];
-  const currentScenario = gameState.currentScenario 
+  const currentScenario = gameState.currentScenario
     ? gameScenarios.find(s => s.id === gameState.currentScenario)
     : null;
-
-  // Check if player has submitted answer for current scenario
-  const hasSubmitted = currentPlayer && gameState.currentScenario
-    ? currentPlayer.answers.some(a => a.scenarioId === gameState.currentScenario)
-    : false;
 
   // Always show admin dashboard with current scenario visible to all
   if (gameState.phase === 'question' && currentScenario) {
