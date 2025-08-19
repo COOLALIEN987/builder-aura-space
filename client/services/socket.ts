@@ -86,8 +86,20 @@ class SocketService {
   }
 
   // Game actions
-  joinGame(name: string, isAdmin = false, adminUsername?: string, adminPassword?: string, teamName?: string) {
-    this.socket?.emit("joinGame", { name, isAdmin, adminUsername, adminPassword, teamName });
+  joinGame(
+    name: string,
+    isAdmin = false,
+    adminUsername?: string,
+    adminPassword?: string,
+    teamName?: string,
+  ) {
+    this.socket?.emit("joinGame", {
+      name,
+      isAdmin,
+      adminUsername,
+      adminPassword,
+      teamName,
+    });
   }
 
   rollDice(targetNumber: number) {
