@@ -20,7 +20,7 @@ let io: Server | null = null;
 // Game state (in-memory)
 let gameState: GameState = {
   id: "game-1",
-  phase: "lobby",
+  phase: "waiting",
   currentScenario: null,
   diceResult: null,
   isRolling: false,
