@@ -259,7 +259,7 @@ const initializeSocketIO = () => {
       const adminPlayer = gameState.players[gameState.adminId];
       gameState = {
         ...gameState,
-        phase: "lobby",
+        phase: "waiting",
         currentScenario: null,
         diceResult: null,
         isRolling: false,
