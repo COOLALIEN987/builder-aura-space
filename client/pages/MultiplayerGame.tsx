@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { socketService } from '@/services/socket';
 import { GameState, gameScenarios, AnswerSubmission } from '@shared/gameData';
-import Lobby from '@/components/Lobby';
+// Lobby removed - direct admin access
 import WaitingRoom from '@/components/WaitingRoom';
 import AdminDashboard from '@/components/AdminDashboard';
 import QuestionDisplay from '@/components/QuestionDisplay';
