@@ -313,6 +313,7 @@ export const gameScenarios: GameScenario[] = [
 export interface Player {
   id: string;
   name: string;
+  teamName?: string;
   isAdmin: boolean;
   connected: boolean;
   answers: Array<{
