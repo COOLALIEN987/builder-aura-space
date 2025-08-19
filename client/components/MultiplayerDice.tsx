@@ -30,16 +30,18 @@ export default function MultiplayerDice({
       const rollInterval = setInterval(() => {
         setRollCount(prev => {
           const newCount = prev + 1;
-          setCurrentValue(Math.floor(Math.random() * 25) + 1);
-          
+          setCurrentValue(Math.floor(Math.random() * 6) + 1); // Only show 1-6
+
           if (newCount >= 12) { // Longer animation for dramatic effect
             clearInterval(rollInterval);
             setTimeout(() => {
-              setCurrentValue(value);
-              onRollComplete?.(value);
+              // Show final dice result (1-6) regardless of actual scenario
+              const finalDiceValue = Math.floor(Math.random() * 6) + 1;
+              setCurrentValue(finalDiceValue);
+              onRollComplete?.(finalDiceValue);
             }, 100);
           }
-          
+
           return newCount;
         });
       }, 150);
