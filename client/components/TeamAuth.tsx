@@ -32,6 +32,21 @@ export default function TeamAuth({
     }
   };
 
+  const handleAdminAccess = () => {
+    setShowAdminPrompt(true);
+  };
+
+  const handleAdminSubmit = () => {
+    if (adminPassword.trim()) {
+      onAdminLogin(adminPassword.trim());
+    }
+  };
+
+  const handleCancelAdmin = () => {
+    setShowAdminPrompt(false);
+    setAdminPassword('');
+  };
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6">
