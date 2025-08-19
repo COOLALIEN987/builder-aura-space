@@ -150,13 +150,29 @@ export default function MultiplayerGame() {
 
   // No auto-join - wait for user choice
 
-  // Show loading while connecting
+  // Show team auth if not connected
   if (!playerId || !gameState) {
+    if (userType === null) {
+      return (
+        <TeamAuth
+          onTeamLogin={handleTeamLogin}
+          onAdminLogin={handleAdminLogin}
+          isConnecting={isConnecting}
+          error={error}
+        />
+      );
+    }
+
+    // Show loading while connecting
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="text-center space-y-4">
-          <div className="text-2xl font-bold text-foreground">Loading Monopoly Madness...</div>
-          <div className="text-muted-foreground">Setting up your game control panel</div>
+          <div className="text-2xl font-bold text-foreground">
+            {userType === 'admin' ? 'Loading Admin Panel...' : 'Joining Team...'}
+          </div>
+          <div className="text-muted-foreground">
+            {userType === 'admin' ? 'Setting up your control panel' : `Connecting ${playerName} to team ${teamName}`}
+          </div>
         </div>
       </div>
     );
