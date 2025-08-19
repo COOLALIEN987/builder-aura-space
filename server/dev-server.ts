@@ -101,12 +101,12 @@ const initializeSocketIO = () => {
 
     socket.on(
       "joinGame",
-      (data: { name: string; isAdmin?: boolean; adminPassword?: string; teamName?: string }) => {
-        const { name, isAdmin = false, adminPassword, teamName } = data;
+      (data: { name: string; isAdmin?: boolean; adminUsername?: string; adminPassword?: string; teamName?: string }) => {
+        const { name, isAdmin = false, adminUsername, adminPassword, teamName } = data;
 
         if (isAdmin) {
-        if (adminPassword !== gameState.settings.adminPassword) {
-          socket.emit("error", { message: "Invalid admin password" });
+        if (adminUsername !== gameState.settings.adminUsername || adminPassword !== gameState.settings.adminPassword) {
+          socket.emit("error", { message: "Invalid admin credentials" });
           return;
         }
         // Always allow new admin (override existing one for direct access)
