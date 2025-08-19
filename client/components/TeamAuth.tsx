@@ -52,16 +52,44 @@ export default function TeamAuth({
       <div className="w-full max-w-md space-y-6">
         {/* Admin Access - Top Right Style */}
         <div className="flex justify-end">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onAdminLogin}
-            disabled={isConnecting}
-            className="flex items-center space-x-2"
-          >
-            <Shield className="w-4 h-4" />
-            <span>Admin Access</span>
-          </Button>
+          {!showAdminPrompt ? (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleAdminAccess}
+              disabled={isConnecting}
+              className="flex items-center space-x-2"
+            >
+              <Shield className="w-4 h-4" />
+              <span>Admin Access</span>
+            </Button>
+          ) : (
+            <div className="flex items-center space-x-2">
+              <Input
+                type="password"
+                placeholder="Admin password"
+                value={adminPassword}
+                onChange={(e) => setAdminPassword(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleAdminSubmit()}
+                className="w-32"
+                size="sm"
+              />
+              <Button
+                size="sm"
+                onClick={handleAdminSubmit}
+                disabled={!adminPassword.trim() || isConnecting}
+              >
+                Login
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCancelAdmin}
+              >
+                Cancel
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Header */}
