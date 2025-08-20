@@ -150,7 +150,7 @@ export default function AdminDashboard({
             <div className="flex items-center space-x-3">
               <MapPin className="w-8 h-8 text-green-400" />
               <div>
-                <div className="text-2xl font-bold">{occupiedVenueSpots}/{totalVenueCapacity}</div>
+                <div className="text-2xl font-bold">{currentVenue?.currentPlayers || 0}/{currentVenue?.maxPlayers || 25}</div>
                 <div className="text-sm text-muted-foreground">Venue Occupancy</div>
               </div>
             </div>
