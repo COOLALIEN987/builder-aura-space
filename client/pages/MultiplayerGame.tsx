@@ -254,6 +254,17 @@ export default function MultiplayerGame() {
 
   // Show different views based on user type
   if (userType === 'admin') {
+    if (!gameState) {
+      return (
+        <div className="min-h-screen bg-background flex items-center justify-center p-4">
+          <div className="text-center space-y-4">
+            <div className="text-2xl font-bold text-foreground">Loading Admin Dashboard...</div>
+            <div className="text-muted-foreground">Connecting to game server</div>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <AdminDashboard
         gameState={gameState}
