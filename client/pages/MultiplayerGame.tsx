@@ -108,10 +108,10 @@ export default function MultiplayerGame() {
     }
   }, [isAdmin, gameState?.usedScenarios]);
 
-  const handleJoinGame = (name: string, isAdminJoin = false, adminUsername?: string, adminPassword?: string, teamName?: string) => {
+  const handleJoinGame = (name: string, isAdminJoin = false, adminUsername?: string, adminPassword?: string, teamName?: string, venueId?: string) => {
     setIsConnecting(true);
     setError(null);
-    socketService.joinGame(name, isAdminJoin, adminUsername, adminPassword, teamName);
+    socketService.joinGame(name, isAdminJoin, adminUsername, adminPassword, teamName, venueId);
   };
 
   const handleTeamLogin = (teamNameInput: string, playerNameInput: string, venueId: string) => {
