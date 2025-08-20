@@ -322,6 +322,8 @@ export default function AdminDashboard({
                       <div>
                         <div className="font-medium">{player.name}</div>
                         <div className="text-sm text-muted-foreground">
+                          {player.teamName && `Team: ${player.teamName} • `}
+                          {player.venueId && `Venue: ${gameState.venues[player.venueId]?.name} • `}
                           Score: {player.score} • Answered: {player.answers.length}
                         </div>
                       </div>
