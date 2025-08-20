@@ -92,6 +92,7 @@ class SocketService {
     adminUsername?: string,
     adminPassword?: string,
     teamName?: string,
+    venueId?: string,
   ) {
     this.socket?.emit("joinGame", {
       name,
@@ -99,6 +100,7 @@ class SocketService {
       adminUsername,
       adminPassword,
       teamName,
+      venueId,
     });
   }
 
