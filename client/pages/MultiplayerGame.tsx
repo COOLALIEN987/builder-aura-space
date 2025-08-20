@@ -157,6 +157,7 @@ export default function MultiplayerGame() {
           onAdminLogin={handleAdminLogin}
           isConnecting={isConnecting}
           error={error}
+          venues={gameState?.venues || {}}
         />
       );
     }
