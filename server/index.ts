@@ -144,14 +144,27 @@ io.on('connection', (socket) => {
 
     // Validate admin
     if (isAdmin) {
+      if (!adminVenueId) {
+        socket.emit('error', { message: 'Venue selection is required for admin' });
+        return;
+      }
+
+      const gameState = gameStates[adminVenueId];
+      if (!gameState) {
+        socket.emit('error', { message: 'Invalid venue selected' });
+        return;
+      }
+
       if (adminPassword !== gameState.settings.adminPassword) {
         socket.emit('error', { message: 'Invalid admin password' });
         return;
       }
+
       if (gameState.adminId && gameState.adminId !== socket.id) {
-        socket.emit('error', { message: 'Admin already exists' });
+        socket.emit('error', { message: 'Admin already exists for this venue' });
         return;
       }
+
       gameState.adminId = socket.id;
     }
 
