@@ -98,19 +98,22 @@ const getAvailableScenariosForVenue = (venueId: string) => {
   );
 };
 
-const endQuestion = () => {
-  if (questionTimer) {
-    clearTimeout(questionTimer);
-    questionTimer = null;
+const endQuestionForVenue = (venueId: string) => {
+  const gameState = gameStates[venueId];
+  if (!gameState) return;
+
+  if (questionTimers[venueId]) {
+    clearTimeout(questionTimers[venueId]!);
+    questionTimers[venueId] = null;
   }
-  
+
   // Auto-submit empty answers for players who didn't submit
   Object.values(gameState.players).forEach(player => {
     if (!player.eliminated && gameState.currentScenario) {
       const hasSubmitted = player.answers.some(
         answer => answer.scenarioId === gameState.currentScenario
       );
-      
+
       if (!hasSubmitted) {
         player.answers.push({
           scenarioId: gameState.currentScenario,
@@ -120,14 +123,14 @@ const endQuestion = () => {
       }
     }
   });
-  
+
   gameState.phase = 'results';
-  broadcastGameState();
-  
+  broadcastGameStateToVenue(venueId);
+
   // Show results for 5 seconds, then go back to waiting
   setTimeout(() => {
     gameState.phase = 'waiting';
-    broadcastGameState();
+    broadcastGameStateToVenue(venueId);
   }, 5000);
 };
 
