@@ -172,6 +172,33 @@ export default function TeamAuth({
                     maxLength={20}
                   />
                 </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="login-venue" className="flex items-center space-x-2">
+                    <MapPin className="w-4 h-4" />
+                    <span>Select Venue</span>
+                  </Label>
+                  <Select value={selectedVenue} onValueChange={setSelectedVenue}>
+                    <SelectTrigger id="login-venue">
+                      <SelectValue placeholder="Choose a venue" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {getAvailableVenues().map((venue) => (
+                        <SelectItem key={venue.id} value={venue.id}>
+                          <div className="flex items-center justify-between w-full">
+                            <span>{venue.name}</span>
+                            <span className="text-xs text-muted-foreground ml-2">
+                              ({venue.currentPlayers}/{venue.maxPlayers})
+                            </span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {getAvailableVenues().length === 0 && (
+                    <p className="text-xs text-red-500">All venues are currently full</p>
+                  )}
+                </div>
               </div>
               
               <Button 
