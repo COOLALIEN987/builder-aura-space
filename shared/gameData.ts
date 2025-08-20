@@ -334,11 +334,41 @@ export interface Venue {
 }
 
 export const VENUES: Venue[] = [
-  { id: 'venue-1', name: 'Boardroom Alpha', maxPlayers: 25, currentPlayers: 0, players: [] },
-  { id: 'venue-2', name: 'Conference Center Beta', maxPlayers: 25, currentPlayers: 0, players: [] },
-  { id: 'venue-3', name: 'Executive Lounge Gamma', maxPlayers: 25, currentPlayers: 0, players: [] },
-  { id: 'venue-4', name: 'Strategy Suite Delta', maxPlayers: 25, currentPlayers: 0, players: [] },
-  { id: 'venue-5', name: 'Innovation Hub Epsilon', maxPlayers: 25, currentPlayers: 0, players: [] },
+  {
+    id: "venue-1",
+    name: "Boardroom Alpha",
+    maxPlayers: 25,
+    currentPlayers: 0,
+    players: [],
+  },
+  {
+    id: "venue-2",
+    name: "Conference Center Beta",
+    maxPlayers: 25,
+    currentPlayers: 0,
+    players: [],
+  },
+  {
+    id: "venue-3",
+    name: "Executive Lounge Gamma",
+    maxPlayers: 25,
+    currentPlayers: 0,
+    players: [],
+  },
+  {
+    id: "venue-4",
+    name: "Strategy Suite Delta",
+    maxPlayers: 25,
+    currentPlayers: 0,
+    players: [],
+  },
+  {
+    id: "venue-5",
+    name: "Innovation Hub Epsilon",
+    maxPlayers: 25,
+    currentPlayers: 0,
+    players: [],
+  },
 ];
 
 export interface Player {

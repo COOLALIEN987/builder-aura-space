@@ -1,13 +1,19 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Users, LogIn, UserPlus, Shield, MapPin } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { VENUES, Venue } from '@shared/gameData';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Users, LogIn, UserPlus, Shield, MapPin } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { VENUES, Venue } from "@shared/gameData";
 
 interface TeamAuthProps {
   onTeamLogin: (teamName: string, playerName: string, venueId: string) => void;
@@ -22,16 +28,16 @@ export default function TeamAuth({
   onAdminLogin,
   isConnecting,
   error,
-  venues
+  venues,
 }: TeamAuthProps) {
-  const [teamName, setTeamName] = useState('');
-  const [playerName, setPlayerName] = useState('');
-  const [selectedVenue, setSelectedVenue] = useState('');
-  const [activeTab, setActiveTab] = useState('login');
+  const [teamName, setTeamName] = useState("");
+  const [playerName, setPlayerName] = useState("");
+  const [selectedVenue, setSelectedVenue] = useState("");
+  const [activeTab, setActiveTab] = useState("login");
   const [showAdminPrompt, setShowAdminPrompt] = useState(false);
-  const [adminUsername, setAdminUsername] = useState('');
-  const [adminPassword, setAdminPassword] = useState('');
-  const [adminSelectedVenue, setAdminSelectedVenue] = useState('');
+  const [adminUsername, setAdminUsername] = useState("");
+  const [adminPassword, setAdminPassword] = useState("");
+  const [adminSelectedVenue, setAdminSelectedVenue] = useState("");
 
   const handleTeamSubmit = (isSignup: boolean) => {
     if (teamName.trim() && playerName.trim() && selectedVenue) {
@@ -43,9 +49,11 @@ export default function TeamAuth({
   const getAvailableVenues = () => {
     // If no venues provided, use default venues as fallback
     if (!venues || Object.keys(venues).length === 0) {
-      return VENUES.filter(venue => venue.currentPlayers < venue.maxPlayers);
+      return VENUES.filter((venue) => venue.currentPlayers < venue.maxPlayers);
     }
-    return Object.values(venues).filter(venue => venue.currentPlayers < venue.maxPlayers);
+    return Object.values(venues).filter(
+      (venue) => venue.currentPlayers < venue.maxPlayers,
+    );
   };
 
   const handleAdminAccess = () => {
@@ -54,15 +62,19 @@ export default function TeamAuth({
 
   const handleAdminSubmit = () => {
     if (adminUsername.trim() && adminPassword.trim() && adminSelectedVenue) {
-      onAdminLogin(adminUsername.trim(), adminPassword.trim(), adminSelectedVenue);
+      onAdminLogin(
+        adminUsername.trim(),
+        adminPassword.trim(),
+        adminSelectedVenue,
+      );
     }
   };
 
   const handleCancelAdmin = () => {
     setShowAdminPrompt(false);
-    setAdminUsername('');
-    setAdminPassword('');
-    setAdminSelectedVenue('');
+    setAdminUsername("");
+    setAdminPassword("");
+    setAdminSelectedVenue("");
   };
 
   return (
@@ -97,33 +109,38 @@ export default function TeamAuth({
                   placeholder="Password"
                   value={adminPassword}
                   onChange={(e) => setAdminPassword(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleAdminSubmit()}
+                  onKeyPress={(e) => e.key === "Enter" && handleAdminSubmit()}
                   size="sm"
                 />
-                <Select value={adminSelectedVenue} onValueChange={setAdminSelectedVenue}>
+                <Select
+                  value={adminSelectedVenue}
+                  onValueChange={setAdminSelectedVenue}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select venue to manage" />
                   </SelectTrigger>
                   <SelectContent>
-                    {Object.values(venues).length > 0 ? Object.values(venues).map((venue) => (
-                      <SelectItem key={venue.id} value={venue.id}>
-                        <div className="flex items-center justify-between w-full">
-                          <span>{venue.name}</span>
-                          <span className="text-xs text-muted-foreground ml-2">
-                            ({venue.currentPlayers}/{venue.maxPlayers})
-                          </span>
-                        </div>
-                      </SelectItem>
-                    )) : VENUES.map((venue) => (
-                      <SelectItem key={venue.id} value={venue.id}>
-                        <div className="flex items-center justify-between w-full">
-                          <span>{venue.name}</span>
-                          <span className="text-xs text-muted-foreground ml-2">
-                            (0/{venue.maxPlayers})
-                          </span>
-                        </div>
-                      </SelectItem>
-                    ))}
+                    {Object.values(venues).length > 0
+                      ? Object.values(venues).map((venue) => (
+                          <SelectItem key={venue.id} value={venue.id}>
+                            <div className="flex items-center justify-between w-full">
+                              <span>{venue.name}</span>
+                              <span className="text-xs text-muted-foreground ml-2">
+                                ({venue.currentPlayers}/{venue.maxPlayers})
+                              </span>
+                            </div>
+                          </SelectItem>
+                        ))
+                      : VENUES.map((venue) => (
+                          <SelectItem key={venue.id} value={venue.id}>
+                            <div className="flex items-center justify-between w-full">
+                              <span>{venue.name}</span>
+                              <span className="text-xs text-muted-foreground ml-2">
+                                (0/{venue.maxPlayers})
+                              </span>
+                            </div>
+                          </SelectItem>
+                        ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -131,7 +148,12 @@ export default function TeamAuth({
                 <Button
                   size="sm"
                   onClick={handleAdminSubmit}
-                  disabled={!adminUsername.trim() || !adminPassword.trim() || !adminSelectedVenue || isConnecting}
+                  disabled={
+                    !adminUsername.trim() ||
+                    !adminPassword.trim() ||
+                    !adminSelectedVenue ||
+                    isConnecting
+                  }
                   className="flex-1"
                 >
                   Login as Admin
@@ -175,11 +197,17 @@ export default function TeamAuth({
         <Card className="p-6">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="login" className="flex items-center space-x-2">
+              <TabsTrigger
+                value="login"
+                className="flex items-center space-x-2"
+              >
                 <LogIn className="w-4 h-4" />
                 <span>Team Login</span>
               </TabsTrigger>
-              <TabsTrigger value="signup" className="flex items-center space-x-2">
+              <TabsTrigger
+                value="signup"
+                className="flex items-center space-x-2"
+              >
                 <UserPlus className="w-4 h-4" />
                 <span>Create Team</span>
               </TabsTrigger>
@@ -205,17 +233,25 @@ export default function TeamAuth({
                     placeholder="Enter your name"
                     value={playerName}
                     onChange={(e) => setPlayerName(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleTeamSubmit(false)}
+                    onKeyPress={(e) =>
+                      e.key === "Enter" && handleTeamSubmit(false)
+                    }
                     maxLength={20}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="login-venue" className="flex items-center space-x-2">
+                  <Label
+                    htmlFor="login-venue"
+                    className="flex items-center space-x-2"
+                  >
                     <MapPin className="w-4 h-4" />
                     <span>Select Venue</span>
                   </Label>
-                  <Select value={selectedVenue} onValueChange={setSelectedVenue}>
+                  <Select
+                    value={selectedVenue}
+                    onValueChange={setSelectedVenue}
+                  >
                     <SelectTrigger id="login-venue">
                       <SelectValue placeholder="Choose a venue" />
                     </SelectTrigger>
@@ -233,18 +269,26 @@ export default function TeamAuth({
                     </SelectContent>
                   </Select>
                   {getAvailableVenues().length === 0 && (
-                    <p className="text-xs text-red-500">All venues are currently full</p>
+                    <p className="text-xs text-red-500">
+                      All venues are currently full
+                    </p>
                   )}
                 </div>
               </div>
-              
+
               <Button
                 onClick={() => handleTeamSubmit(false)}
-                disabled={!teamName.trim() || !playerName.trim() || !selectedVenue || isConnecting || getAvailableVenues().length === 0}
+                disabled={
+                  !teamName.trim() ||
+                  !playerName.trim() ||
+                  !selectedVenue ||
+                  isConnecting ||
+                  getAvailableVenues().length === 0
+                }
                 className="w-full"
                 size="lg"
               >
-                {isConnecting ? 'Joining Team...' : 'Join Team'}
+                {isConnecting ? "Joining Team..." : "Join Team"}
               </Button>
 
               <div className="text-xs text-muted-foreground text-center space-y-1">
@@ -274,17 +318,25 @@ export default function TeamAuth({
                     placeholder="Enter your name"
                     value={playerName}
                     onChange={(e) => setPlayerName(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleTeamSubmit(true)}
+                    onKeyPress={(e) =>
+                      e.key === "Enter" && handleTeamSubmit(true)
+                    }
                     maxLength={20}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="signup-venue" className="flex items-center space-x-2">
+                  <Label
+                    htmlFor="signup-venue"
+                    className="flex items-center space-x-2"
+                  >
                     <MapPin className="w-4 h-4" />
                     <span>Select Venue</span>
                   </Label>
-                  <Select value={selectedVenue} onValueChange={setSelectedVenue}>
+                  <Select
+                    value={selectedVenue}
+                    onValueChange={setSelectedVenue}
+                  >
                     <SelectTrigger id="signup-venue">
                       <SelectValue placeholder="Choose a venue" />
                     </SelectTrigger>
@@ -302,19 +354,27 @@ export default function TeamAuth({
                     </SelectContent>
                   </Select>
                   {getAvailableVenues().length === 0 && (
-                    <p className="text-xs text-red-500">All venues are currently full</p>
+                    <p className="text-xs text-red-500">
+                      All venues are currently full
+                    </p>
                   )}
                 </div>
               </div>
-              
+
               <Button
                 onClick={() => handleTeamSubmit(true)}
-                disabled={!teamName.trim() || !playerName.trim() || !selectedVenue || isConnecting || getAvailableVenues().length === 0}
+                disabled={
+                  !teamName.trim() ||
+                  !playerName.trim() ||
+                  !selectedVenue ||
+                  isConnecting ||
+                  getAvailableVenues().length === 0
+                }
                 className="w-full"
                 size="lg"
                 variant="outline"
               >
-                {isConnecting ? 'Creating Team...' : 'Create & Join Team'}
+                {isConnecting ? "Creating Team..." : "Create & Join Team"}
               </Button>
 
               <div className="text-xs text-muted-foreground text-center space-y-1">

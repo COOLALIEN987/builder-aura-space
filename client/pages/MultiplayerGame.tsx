@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
-import { socketService } from '@/services/socket';
-import { GameState, gameScenarios, AnswerSubmission } from '@shared/gameData';
-import TeamAuth from '@/components/TeamAuth';
-import TeamTaskView from '@/components/TeamTaskView';
-import AdminDashboard from '@/components/AdminDashboard';
-import MultiplayerDice from '@/components/MultiplayerDice';
-import { toast } from '@/hooks/use-toast';
+import { useState, useEffect } from "react";
+import { socketService } from "@/services/socket";
+import { GameState, gameScenarios, AnswerSubmission } from "@shared/gameData";
+import TeamAuth from "@/components/TeamAuth";
+import TeamTaskView from "@/components/TeamTaskView";
+import AdminDashboard from "@/components/AdminDashboard";
+import MultiplayerDice from "@/components/MultiplayerDice";
+import { toast } from "@/hooks/use-toast";
 
 export default function MultiplayerGame() {
   const [gameState, setGameState] = useState<GameState | null>(null);
@@ -15,61 +15,68 @@ export default function MultiplayerGame() {
   const [error, setError] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [availableScenarios, setAvailableScenarios] = useState<number[]>([]);
-  const [playerAnswers, setPlayerAnswers] = useState<Array<{
-    playerId: string;
-    playerName: string;
-    answer: any;
-  }>>([]);
+  const [playerAnswers, setPlayerAnswers] = useState<
+    Array<{
+      playerId: string;
+      playerName: string;
+      answer: any;
+    }>
+  >([]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [teamName, setTeamName] = useState<string>('');
-  const [playerName, setPlayerName] = useState<string>('');
-  const [userType, setUserType] = useState<'team' | 'admin' | null>(null);
-  const [adminVenueId, setAdminVenueId] = useState<string>('');
+  const [teamName, setTeamName] = useState<string>("");
+  const [playerName, setPlayerName] = useState<string>("");
+  const [userType, setUserType] = useState<"team" | "admin" | null>(null);
+  const [adminVenueId, setAdminVenueId] = useState<string>("");
 
   // Initialize socket connection and fetch initial venue state
   useEffect(() => {
     // Fetch initial venue state for venue selection
-    fetch('/api/game-state')
-      .then(res => res.json())
-      .then(initialVenueState => {
+    fetch("/api/game-state")
+      .then((res) => res.json())
+      .then((initialVenueState) => {
         // Only set venues for initial loading, full gameState comes from socket
-        setGameState(prev => prev ? { ...prev, venues: initialVenueState.venues } : null);
+        setGameState((prev) =>
+          prev ? { ...prev, venues: initialVenueState.venues } : null,
+        );
       })
-      .catch(err => {
-        console.error('Failed to fetch initial venue state:', err);
+      .catch((err) => {
+        console.error("Failed to fetch initial venue state:", err);
       });
 
     socketService.connect();
 
     // Set up event listeners
-    socketService.on('gameState', (newGameState: GameState) => {
-      console.log('Received game state:', newGameState);
+    socketService.on("gameState", (newGameState: GameState) => {
+      console.log("Received game state:", newGameState);
       setGameState(newGameState);
     });
 
-    socketService.on('playerJoined', (data: { playerId: string; isAdmin: boolean; venueId: string }) => {
-      console.log('Player joined:', data);
-      setPlayerId(data.playerId);
-      setIsAdmin(data.isAdmin);
-      setIsConnecting(false);
-      setError(null);
+    socketService.on(
+      "playerJoined",
+      (data: { playerId: string; isAdmin: boolean; venueId: string }) => {
+        console.log("Player joined:", data);
+        setPlayerId(data.playerId);
+        setIsAdmin(data.isAdmin);
+        setIsConnecting(false);
+        setError(null);
 
-      if (data.isAdmin) {
-        console.log('Admin logged in for venue:', data.venueId);
-        setAdminVenueId(data.venueId);
-        socketService.getAvailableScenarios();
-      }
-    });
+        if (data.isAdmin) {
+          console.log("Admin logged in for venue:", data.venueId);
+          setAdminVenueId(data.venueId);
+          socketService.getAvailableScenarios();
+        }
+      },
+    );
 
-    socketService.on('availableScenarios', (scenarios: number[]) => {
+    socketService.on("availableScenarios", (scenarios: number[]) => {
       setAvailableScenarios(scenarios);
     });
 
-    socketService.on('playerAnswered', (data: any) => {
-      setPlayerAnswers(prev => [...prev, data]);
+    socketService.on("playerAnswered", (data: any) => {
+      setPlayerAnswers((prev) => [...prev, data]);
     });
 
-    socketService.on('answerSubmitted', () => {
+    socketService.on("answerSubmitted", () => {
       setIsSubmitting(false);
       toast({
         title: "Answer Submitted",
@@ -77,7 +84,7 @@ export default function MultiplayerGame() {
       });
     });
 
-    socketService.on('eliminated', () => {
+    socketService.on("eliminated", () => {
       toast({
         title: "Team eliminated",
         description: "Your team has been eliminated from the game.",
@@ -85,7 +92,7 @@ export default function MultiplayerGame() {
       });
     });
 
-    socketService.on('error', (error: { message: string }) => {
+    socketService.on("error", (error: { message: string }) => {
       setError(error.message);
       setIsConnecting(false);
       toast({
@@ -102,12 +109,14 @@ export default function MultiplayerGame() {
 
   // Calculate time left for questions
   useEffect(() => {
-    if (gameState?.phase === 'question' && gameState.questionStartTime) {
+    if (gameState?.phase === "question" && gameState.questionStartTime) {
       const interval = setInterval(() => {
-        const elapsed = Math.floor((Date.now() - gameState.questionStartTime!) / 1000);
+        const elapsed = Math.floor(
+          (Date.now() - gameState.questionStartTime!) / 1000,
+        );
         const remaining = Math.max(0, 60 - elapsed);
         setTimeLeft(remaining);
-        
+
         if (remaining === 0) {
           clearInterval(interval);
         }
@@ -124,22 +133,61 @@ export default function MultiplayerGame() {
     }
   }, [isAdmin, gameState?.usedScenarios]);
 
-  const handleJoinGame = (name: string, isAdminJoin = false, adminUsername?: string, adminPassword?: string, teamName?: string, venueId?: string, adminVenueId?: string) => {
+  const handleJoinGame = (
+    name: string,
+    isAdminJoin = false,
+    adminUsername?: string,
+    adminPassword?: string,
+    teamName?: string,
+    venueId?: string,
+    adminVenueId?: string,
+  ) => {
     setIsConnecting(true);
     setError(null);
-    socketService.joinGame(name, isAdminJoin, adminUsername, adminPassword, teamName, venueId, adminVenueId);
+    socketService.joinGame(
+      name,
+      isAdminJoin,
+      adminUsername,
+      adminPassword,
+      teamName,
+      venueId,
+      adminVenueId,
+    );
   };
 
-  const handleTeamLogin = (teamNameInput: string, playerNameInput: string, venueId: string) => {
+  const handleTeamLogin = (
+    teamNameInput: string,
+    playerNameInput: string,
+    venueId: string,
+  ) => {
     setTeamName(teamNameInput);
     setPlayerName(playerNameInput);
-    setUserType('team');
-    handleJoinGame(playerNameInput, false, undefined, undefined, teamNameInput, venueId);
+    setUserType("team");
+    handleJoinGame(
+      playerNameInput,
+      false,
+      undefined,
+      undefined,
+      teamNameInput,
+      venueId,
+    );
   };
 
-  const handleAdminLogin = (username: string, password: string, venueId: string) => {
-    setUserType('admin');
-    handleJoinGame('Game Admin', true, username, password, undefined, undefined, venueId);
+  const handleAdminLogin = (
+    username: string,
+    password: string,
+    venueId: string,
+  ) => {
+    setUserType("admin");
+    handleJoinGame(
+      "Game Admin",
+      true,
+      username,
+      password,
+      undefined,
+      undefined,
+      venueId,
+    );
   };
 
   const handleRollDice = (targetNumber: number) => {
@@ -173,43 +221,82 @@ export default function MultiplayerGame() {
           onAdminLogin={handleAdminLogin}
           isConnecting={isConnecting}
           error={error}
-          venues={gameState?.venues || {
-            'venue-1': { id: 'venue-1', name: 'Boardroom Alpha', maxPlayers: 25, currentPlayers: 0, players: [] },
-            'venue-2': { id: 'venue-2', name: 'Conference Center Beta', maxPlayers: 25, currentPlayers: 0, players: [] },
-            'venue-3': { id: 'venue-3', name: 'Executive Lounge Gamma', maxPlayers: 25, currentPlayers: 0, players: [] },
-            'venue-4': { id: 'venue-4', name: 'Strategy Suite Delta', maxPlayers: 25, currentPlayers: 0, players: [] },
-            'venue-5': { id: 'venue-5', name: 'Innovation Hub Epsilon', maxPlayers: 25, currentPlayers: 0, players: [] }
-          }}
+          venues={
+            gameState?.venues || {
+              "venue-1": {
+                id: "venue-1",
+                name: "Boardroom Alpha",
+                maxPlayers: 25,
+                currentPlayers: 0,
+                players: [],
+              },
+              "venue-2": {
+                id: "venue-2",
+                name: "Conference Center Beta",
+                maxPlayers: 25,
+                currentPlayers: 0,
+                players: [],
+              },
+              "venue-3": {
+                id: "venue-3",
+                name: "Executive Lounge Gamma",
+                maxPlayers: 25,
+                currentPlayers: 0,
+                players: [],
+              },
+              "venue-4": {
+                id: "venue-4",
+                name: "Strategy Suite Delta",
+                maxPlayers: 25,
+                currentPlayers: 0,
+                players: [],
+              },
+              "venue-5": {
+                id: "venue-5",
+                name: "Innovation Hub Epsilon",
+                maxPlayers: 25,
+                currentPlayers: 0,
+                players: [],
+              },
+            }
+          }
         />
       );
     }
-    
+
     // Show loading while connecting
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <div className="text-2xl font-bold text-foreground">
-            {userType === 'admin' ? 'Loading Admin Panel...' : 'Joining Team...'}
+            {userType === "admin"
+              ? "Loading Admin Panel..."
+              : "Joining Team..."}
           </div>
           <div className="text-muted-foreground">
-            {userType === 'admin' ? 'Setting up your control panel' : `Connecting ${playerName} to team ${teamName}`}
+            {userType === "admin"
+              ? "Setting up your control panel"
+              : `Connecting ${playerName} to team ${teamName}`}
           </div>
         </div>
       </div>
     );
   }
 
-  const currentScenario = gameState.currentScenario 
-    ? gameScenarios.find(s => s.id === gameState.currentScenario)
+  const currentScenario = gameState.currentScenario
+    ? gameScenarios.find((s) => s.id === gameState.currentScenario)
     : null;
 
   const currentPlayer = gameState.players[playerId];
-  const hasSubmitted = currentPlayer && gameState.currentScenario
-    ? currentPlayer.answers.some(a => a.scenarioId === gameState.currentScenario)
-    : false;
+  const hasSubmitted =
+    currentPlayer && gameState.currentScenario
+      ? currentPlayer.answers.some(
+          (a) => a.scenarioId === gameState.currentScenario,
+        )
+      : false;
 
   // Show dice rolling animation
-  if (gameState.phase === 'rolling') {
+  if (gameState.phase === "rolling") {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="text-center space-y-8">
@@ -237,7 +324,11 @@ export default function MultiplayerGame() {
   }
 
   // Show task view for teams when scenario is active
-  if (gameState.phase === 'question' && currentScenario && userType === 'team') {
+  if (
+    gameState.phase === "question" &&
+    currentScenario &&
+    userType === "team"
+  ) {
     return (
       <TeamTaskView
         scenario={currentScenario}
@@ -253,13 +344,17 @@ export default function MultiplayerGame() {
   }
 
   // Show different views based on user type
-  if (userType === 'admin') {
+  if (userType === "admin") {
     if (!gameState) {
       return (
         <div className="min-h-screen bg-background flex items-center justify-center p-4">
           <div className="text-center space-y-4">
-            <div className="text-2xl font-bold text-foreground">Loading Admin Dashboard...</div>
-            <div className="text-muted-foreground">Connecting to game server</div>
+            <div className="text-2xl font-bold text-foreground">
+              Loading Admin Dashboard...
+            </div>
+            <div className="text-muted-foreground">
+              Connecting to game server
+            </div>
           </div>
         </div>
       );
@@ -285,42 +380,63 @@ export default function MultiplayerGame() {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="max-w-2xl w-full space-y-6">
         <div className="text-center space-y-4">
-          <h1 className="text-3xl font-bold text-foreground">Monopoly Madness</h1>
+          <h1 className="text-3xl font-bold text-foreground">
+            Monopoly Madness
+          </h1>
           <p className="text-muted-foreground">Team Challenge Arena</p>
         </div>
 
         <div className="bg-card border rounded-xl p-6 space-y-4">
           <div className="text-center space-y-2">
-            <div className="text-lg font-semibold text-foreground">Team: {teamName}</div>
+            <div className="text-lg font-semibold text-foreground">
+              Team: {teamName}
+            </div>
             <div className="text-muted-foreground">Player: {playerName}</div>
           </div>
 
           <div className="text-center space-y-4">
-            {gameState.phase === 'rolling' ? (
+            {gameState.phase === "rolling" ? (
               <>
-                <div className="text-xl font-bold text-foreground">🎲 Dice is rolling...</div>
-                <div className="text-muted-foreground">Get ready for your challenge!</div>
+                <div className="text-xl font-bold text-foreground">
+                  🎲 Dice is rolling...
+                </div>
+                <div className="text-muted-foreground">
+                  Get ready for your challenge!
+                </div>
               </>
-            ) : gameState.phase === 'results' ? (
+            ) : gameState.phase === "results" ? (
               <>
-                <div className="text-xl font-bold text-foreground">📊 Reviewing answers...</div>
-                <div className="text-muted-foreground">Results coming up next!</div>
+                <div className="text-xl font-bold text-foreground">
+                  📊 Reviewing answers...
+                </div>
+                <div className="text-muted-foreground">
+                  Results coming up next!
+                </div>
               </>
             ) : (
               <>
-                <div className="text-xl font-bold text-foreground">⏳ Waiting for admin...</div>
-                <div className="text-muted-foreground">The admin will roll the dice soon to reveal your next challenge</div>
+                <div className="text-xl font-bold text-foreground">
+                  ⏳ Waiting for admin...
+                </div>
+                <div className="text-muted-foreground">
+                  The admin will roll the dice soon to reveal your next
+                  challenge
+                </div>
               </>
             )}
           </div>
 
           <div className="grid grid-cols-2 gap-4 text-center text-sm">
             <div>
-              <div className="font-semibold text-primary">{gameState.usedScenarios.length}/25</div>
+              <div className="font-semibold text-primary">
+                {gameState.usedScenarios.length}/25
+              </div>
               <div className="text-muted-foreground">Completed</div>
             </div>
             <div>
-              <div className="font-semibold text-primary">{25 - gameState.usedScenarios.length}</div>
+              <div className="font-semibold text-primary">
+                {25 - gameState.usedScenarios.length}
+              </div>
               <div className="text-muted-foreground">Remaining</div>
             </div>
           </div>

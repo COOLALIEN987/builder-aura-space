@@ -3,15 +3,22 @@ import { Server } from "socket.io";
 import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
-import { GameState, Player, gameScenarios, AnswerSubmission, VENUES, Venue } from "../shared/gameData";
+import {
+  GameState,
+  Player,
+  gameScenarios,
+  AnswerSubmission,
+  VENUES,
+  Venue,
+} from "../shared/gameData";
 
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
     origin: "*",
-    methods: ["GET", "POST"]
-  }
+    methods: ["GET", "POST"],
+  },
 });
 
 app.use(cors());
@@ -19,21 +26,21 @@ app.use(express.json());
 
 // Initialize venues from template for a single game session
 const initializeVenuesForSession = (venueId: string): Record<string, Venue> => {
-  const venue = VENUES.find(v => v.id === venueId);
+  const venue = VENUES.find((v) => v.id === venueId);
   if (!venue) return {};
 
   return {
-    [venueId]: { ...venue, currentPlayers: 0, players: [] }
+    [venueId]: { ...venue, currentPlayers: 0, players: [] },
   };
 };
 
 // Create separate game sessions for each venue
 const gameStates: Record<string, GameState> = {};
 
-VENUES.forEach(venue => {
+VENUES.forEach((venue) => {
   gameStates[venue.id] = {
     id: venue.id,
-    phase: 'lobby',
+    phase: "lobby",
     currentScenario: null,
     diceResult: null,
     isRolling: false,
@@ -43,23 +50,26 @@ VENUES.forEach(venue => {
     venues: initializeVenuesForSession(venue.id),
     adminId: null,
     settings: {
-      adminPassword: 'admin123',
-      maxPlayers: 25 // Each venue has 25 players max
-    }
+      adminPassword: "admin123",
+      maxPlayers: 25, // Each venue has 25 players max
+    },
   };
 });
 
 // Global venue overview (for initial loading)
 const globalVenueState = {
-  venues: VENUES.reduce((acc, venue) => {
-    acc[venue.id] = { ...venue, currentPlayers: 0, players: [] };
-    return acc;
-  }, {} as Record<string, Venue>)
+  venues: VENUES.reduce(
+    (acc, venue) => {
+      acc[venue.id] = { ...venue, currentPlayers: 0, players: [] };
+      return acc;
+    },
+    {} as Record<string, Venue>,
+  ),
 };
 
 // Timer references for auto-submitting answers (one per venue)
 const questionTimers: Record<string, NodeJS.Timeout | null> = {};
-VENUES.forEach(venue => {
+VENUES.forEach((venue) => {
   questionTimers[venue.id] = null;
 });
 
@@ -71,8 +81,8 @@ const broadcastGameStateToVenue = (venueId: string) => {
   if (!gameState) return;
 
   // Emit to all players in this venue
-  Object.keys(gameState.players).forEach(playerId => {
-    io.to(playerId).emit('gameState', gameState);
+  Object.keys(gameState.players).forEach((playerId) => {
+    io.to(playerId).emit("gameState", gameState);
   });
 
   // Update global venue state
@@ -94,7 +104,7 @@ const getAvailableScenariosForVenue = (venueId: string) => {
   if (!gameState) return [];
 
   return Array.from({ length: 25 }, (_, i) => i + 1).filter(
-    id => !gameState.usedScenarios.includes(id)
+    (id) => !gameState.usedScenarios.includes(id),
   );
 };
 
@@ -108,158 +118,186 @@ const endQuestionForVenue = (venueId: string) => {
   }
 
   // Auto-submit empty answers for players who didn't submit
-  Object.values(gameState.players).forEach(player => {
+  Object.values(gameState.players).forEach((player) => {
     if (!player.eliminated && gameState.currentScenario) {
       const hasSubmitted = player.answers.some(
-        answer => answer.scenarioId === gameState.currentScenario
+        (answer) => answer.scenarioId === gameState.currentScenario,
       );
 
       if (!hasSubmitted) {
         player.answers.push({
           scenarioId: gameState.currentScenario,
-          justification: '[Time expired - no answer]',
-          submittedAt: Date.now()
+          justification: "[Time expired - no answer]",
+          submittedAt: Date.now(),
         });
       }
     }
   });
 
-  gameState.phase = 'results';
+  gameState.phase = "results";
   broadcastGameStateToVenue(venueId);
 
   // Show results for 5 seconds, then go back to waiting
   setTimeout(() => {
-    gameState.phase = 'waiting';
+    gameState.phase = "waiting";
     broadcastGameStateToVenue(venueId);
   }, 5000);
 };
 
 // Socket.io connection handling
-io.on('connection', (socket) => {
-  console.log('User connected:', socket.id);
+io.on("connection", (socket) => {
+  console.log("User connected:", socket.id);
 
   // Player joins game
-  socket.on('joinGame', (data: { name: string; teamName?: string; venueId?: string; isAdmin?: boolean; adminPassword?: string; adminVenueId?: string }) => {
-    const { name, teamName, venueId, isAdmin = false, adminPassword, adminVenueId } = data;
+  socket.on(
+    "joinGame",
+    (data: {
+      name: string;
+      teamName?: string;
+      venueId?: string;
+      isAdmin?: boolean;
+      adminPassword?: string;
+      adminVenueId?: string;
+    }) => {
+      const {
+        name,
+        teamName,
+        venueId,
+        isAdmin = false,
+        adminPassword,
+        adminVenueId,
+      } = data;
 
-    // Validate admin
-    if (isAdmin) {
-      if (!adminVenueId) {
-        socket.emit('error', { message: 'Venue selection is required for admin' });
-        return;
+      // Validate admin
+      if (isAdmin) {
+        if (!adminVenueId) {
+          socket.emit("error", {
+            message: "Venue selection is required for admin",
+          });
+          return;
+        }
+
+        const gameState = gameStates[adminVenueId];
+        if (!gameState) {
+          socket.emit("error", { message: "Invalid venue selected" });
+          return;
+        }
+
+        if (adminPassword !== gameState.settings.adminPassword) {
+          socket.emit("error", { message: "Invalid admin password" });
+          return;
+        }
+
+        if (gameState.adminId && gameState.adminId !== socket.id) {
+          socket.emit("error", {
+            message: "Admin already exists for this venue",
+          });
+          return;
+        }
+
+        gameState.adminId = socket.id;
       }
 
-      const gameState = gameStates[adminVenueId];
+      // Determine which venue's game session to use
+      const targetVenueId = isAdmin ? adminVenueId! : venueId!;
+      const gameState = gameStates[targetVenueId];
+
       if (!gameState) {
-        socket.emit('error', { message: 'Invalid venue selected' });
+        socket.emit("error", { message: "Invalid venue selected" });
         return;
       }
 
-      if (adminPassword !== gameState.settings.adminPassword) {
-        socket.emit('error', { message: 'Invalid admin password' });
+      // Check if venue game is full
+      const playerCount = Object.keys(gameState.players).length;
+      if (!isAdmin && playerCount >= gameState.settings.maxPlayers) {
+        socket.emit("error", { message: "This venue is full" });
         return;
       }
 
-      if (gameState.adminId && gameState.adminId !== socket.id) {
-        socket.emit('error', { message: 'Admin already exists for this venue' });
-        return;
+      // For non-admin players, validate and assign venue
+      if (!isAdmin) {
+        if (!venueId) {
+          socket.emit("error", { message: "Venue selection is required" });
+          return;
+        }
+
+        const venue = gameState.venues[venueId];
+        if (!venue) {
+          socket.emit("error", { message: "Invalid venue selected" });
+          return;
+        }
+
+        if (venue.currentPlayers >= venue.maxPlayers) {
+          socket.emit("error", { message: "Selected venue is full" });
+          return;
+        }
+
+        // Add player to venue
+        venue.players.push(socket.id);
+        venue.currentPlayers++;
+
+        // Update global venue state
+        globalVenueState.venues[venueId] = { ...venue };
       }
 
-      gameState.adminId = socket.id;
-    }
+      // Create player
+      const player: Player = {
+        id: socket.id,
+        name,
+        teamName,
+        venueId: isAdmin ? adminVenueId : venueId,
+        isAdmin,
+        connected: true,
+        answers: [],
+        score: 0,
+        eliminated: false,
+      };
 
-    // Determine which venue's game session to use
-    const targetVenueId = isAdmin ? adminVenueId! : venueId!;
-    const gameState = gameStates[targetVenueId];
+      gameState.players[socket.id] = player;
+      socket.emit("playerJoined", {
+        playerId: socket.id,
+        isAdmin,
+        venueId: targetVenueId,
+      });
+      broadcastGameStateToVenue(targetVenueId);
 
-    if (!gameState) {
-      socket.emit('error', { message: 'Invalid venue selected' });
-      return;
-    }
-
-    // Check if venue game is full
-    const playerCount = Object.keys(gameState.players).length;
-    if (!isAdmin && playerCount >= gameState.settings.maxPlayers) {
-      socket.emit('error', { message: 'This venue is full' });
-      return;
-    }
-
-    // For non-admin players, validate and assign venue
-    if (!isAdmin) {
-      if (!venueId) {
-        socket.emit('error', { message: 'Venue selection is required' });
-        return;
-      }
-
-      const venue = gameState.venues[venueId];
-      if (!venue) {
-        socket.emit('error', { message: 'Invalid venue selected' });
-        return;
-      }
-
-      if (venue.currentPlayers >= venue.maxPlayers) {
-        socket.emit('error', { message: 'Selected venue is full' });
-        return;
-      }
-
-      // Add player to venue
-      venue.players.push(socket.id);
-      venue.currentPlayers++;
-
-      // Update global venue state
-      globalVenueState.venues[venueId] = { ...venue };
-    }
-
-    // Create player
-    const player: Player = {
-      id: socket.id,
-      name,
-      teamName,
-      venueId: isAdmin ? adminVenueId : venueId,
-      isAdmin,
-      connected: true,
-      answers: [],
-      score: 0,
-      eliminated: false
-    };
-
-    gameState.players[socket.id] = player;
-    socket.emit('playerJoined', { playerId: socket.id, isAdmin, venueId: targetVenueId });
-    broadcastGameStateToVenue(targetVenueId);
-
-    console.log(`${isAdmin ? 'Admin' : 'Player'} joined venue ${targetVenueId}:`, name);
-  });
+      console.log(
+        `${isAdmin ? "Admin" : "Player"} joined venue ${targetVenueId}:`,
+        name,
+      );
+    },
+  );
 
   // Admin rolls dice
-  socket.on('rollDice', (targetNumber: number) => {
+  socket.on("rollDice", (targetNumber: number) => {
     // Find which venue this admin manages
-    const adminVenueId = Object.keys(gameStates).find(venueId =>
-      gameStates[venueId].adminId === socket.id
+    const adminVenueId = Object.keys(gameStates).find(
+      (venueId) => gameStates[venueId].adminId === socket.id,
     );
 
     if (!adminVenueId) {
-      socket.emit('error', { message: 'Admin not found' });
+      socket.emit("error", { message: "Admin not found" });
       return;
     }
 
     const gameState = gameStates[adminVenueId];
 
-    if (gameState.phase !== 'waiting') {
-      socket.emit('error', { message: 'Cannot roll dice now' });
+    if (gameState.phase !== "waiting") {
+      socket.emit("error", { message: "Cannot roll dice now" });
       return;
     }
 
     if (!targetNumber || targetNumber < 1 || targetNumber > 25) {
-      socket.emit('error', { message: 'Invalid dice number' });
+      socket.emit("error", { message: "Invalid dice number" });
       return;
     }
 
     if (gameState.usedScenarios.includes(targetNumber)) {
-      socket.emit('error', { message: 'Scenario already used' });
+      socket.emit("error", { message: "Scenario already used" });
       return;
     }
 
-    gameState.phase = 'rolling';
+    gameState.phase = "rolling";
     gameState.isRolling = true;
     broadcastGameStateToVenue(adminVenueId);
 
@@ -269,25 +307,28 @@ io.on('connection', (socket) => {
       gameState.currentScenario = targetNumber;
       gameState.usedScenarios.push(targetNumber);
       gameState.isRolling = false;
-      gameState.phase = 'question';
+      gameState.phase = "question";
       gameState.questionStartTime = Date.now();
 
       broadcastGameStateToVenue(adminVenueId);
 
       // Start question timer for this venue
-      questionTimers[adminVenueId] = setTimeout(() => endQuestionForVenue(adminVenueId), 60000); // 60 seconds
+      questionTimers[adminVenueId] = setTimeout(
+        () => endQuestionForVenue(adminVenueId),
+        60000,
+      ); // 60 seconds
     }, 3000); // 3 second dice animation
   });
 
   // Player submits answer
-  socket.on('submitAnswer', (answer: AnswerSubmission) => {
+  socket.on("submitAnswer", (answer: AnswerSubmission) => {
     // Find which venue this player belongs to
-    const playerVenueId = Object.keys(gameStates).find(venueId =>
-      gameStates[venueId].players[socket.id]
+    const playerVenueId = Object.keys(gameStates).find(
+      (venueId) => gameStates[venueId].players[socket.id],
     );
 
     if (!playerVenueId) {
-      socket.emit('error', { message: 'Player not found in any venue' });
+      socket.emit("error", { message: "Player not found in any venue" });
       return;
     }
 
@@ -295,32 +336,34 @@ io.on('connection', (socket) => {
     const player = gameState.players[socket.id];
 
     if (!player || player.eliminated) {
-      socket.emit('error', { message: 'Player not found or eliminated' });
+      socket.emit("error", { message: "Player not found or eliminated" });
       return;
     }
 
-    if (gameState.phase !== 'question' || !gameState.currentScenario) {
-      socket.emit('error', { message: 'No active question' });
+    if (gameState.phase !== "question" || !gameState.currentScenario) {
+      socket.emit("error", { message: "No active question" });
       return;
     }
 
     if (answer.scenarioId !== gameState.currentScenario) {
-      socket.emit('error', { message: 'Invalid scenario ID' });
+      socket.emit("error", { message: "Invalid scenario ID" });
       return;
     }
 
     // Check if player already submitted
     const hasSubmitted = player.answers.some(
-      a => a.scenarioId === answer.scenarioId
+      (a) => a.scenarioId === answer.scenarioId,
     );
     if (hasSubmitted) {
-      socket.emit('error', { message: 'Answer already submitted' });
+      socket.emit("error", { message: "Answer already submitted" });
       return;
     }
 
     // Validate justification length
     if (!answer.justification || answer.justification.length > 60) {
-      socket.emit('error', { message: 'Justification must be 1-60 characters' });
+      socket.emit("error", {
+        message: "Justification must be 1-60 characters",
+      });
       return;
     }
 
@@ -329,31 +372,33 @@ io.on('connection', (socket) => {
       scenarioId: answer.scenarioId,
       selectedOption: answer.selectedOption,
       justification: answer.justification,
-      submittedAt: Date.now()
+      submittedAt: Date.now(),
     });
 
     // Update score (simple scoring for now)
     player.score += 10;
 
-    socket.emit('answerSubmitted');
-    broadcastToVenueAdmin(playerVenueId, 'playerAnswered', {
+    socket.emit("answerSubmitted");
+    broadcastToVenueAdmin(playerVenueId, "playerAnswered", {
       playerId: socket.id,
       playerName: player.name,
-      answer: answer
+      answer: answer,
     });
 
-    console.log(`Player ${player.name} in venue ${playerVenueId} submitted answer for scenario ${answer.scenarioId}`);
+    console.log(
+      `Player ${player.name} in venue ${playerVenueId} submitted answer for scenario ${answer.scenarioId}`,
+    );
   });
 
   // Admin eliminates player
-  socket.on('eliminatePlayer', (playerId: string) => {
+  socket.on("eliminatePlayer", (playerId: string) => {
     // Find which venue this admin manages
-    const adminVenueId = Object.keys(gameStates).find(venueId =>
-      gameStates[venueId].adminId === socket.id
+    const adminVenueId = Object.keys(gameStates).find(
+      (venueId) => gameStates[venueId].adminId === socket.id,
     );
 
     if (!adminVenueId) {
-      socket.emit('error', { message: 'Admin not found' });
+      socket.emit("error", { message: "Admin not found" });
       return;
     }
 
@@ -362,40 +407,42 @@ io.on('connection', (socket) => {
 
     if (player && !player.isAdmin) {
       player.eliminated = true;
-      io.to(playerId).emit('eliminated');
+      io.to(playerId).emit("eliminated");
       broadcastGameStateToVenue(adminVenueId);
-      console.log(`Player ${player.name} eliminated from venue ${adminVenueId}`);
+      console.log(
+        `Player ${player.name} eliminated from venue ${adminVenueId}`,
+      );
     }
   });
 
   // Admin ends current question
-  socket.on('endQuestion', () => {
+  socket.on("endQuestion", () => {
     // Find which venue this admin manages
-    const adminVenueId = Object.keys(gameStates).find(venueId =>
-      gameStates[venueId].adminId === socket.id
+    const adminVenueId = Object.keys(gameStates).find(
+      (venueId) => gameStates[venueId].adminId === socket.id,
     );
 
     if (!adminVenueId) {
-      socket.emit('error', { message: 'Admin not found' });
+      socket.emit("error", { message: "Admin not found" });
       return;
     }
 
     const gameState = gameStates[adminVenueId];
 
-    if (gameState.phase === 'question') {
+    if (gameState.phase === "question") {
       endQuestionForVenue(adminVenueId);
     }
   });
 
   // Admin resets game
-  socket.on('resetGame', () => {
+  socket.on("resetGame", () => {
     // Find which venue this admin manages
-    const adminVenueId = Object.keys(gameStates).find(venueId =>
-      gameStates[venueId].adminId === socket.id
+    const adminVenueId = Object.keys(gameStates).find(
+      (venueId) => gameStates[venueId].adminId === socket.id,
     );
 
     if (!adminVenueId) {
-      socket.emit('error', { message: 'Admin not found' });
+      socket.emit("error", { message: "Admin not found" });
       return;
     }
 
@@ -405,14 +452,14 @@ io.on('connection', (socket) => {
     const adminPlayer = gameState.players[gameState.adminId!];
     gameStates[adminVenueId] = {
       ...gameState,
-      phase: 'lobby',
+      phase: "lobby",
       currentScenario: null,
       diceResult: null,
       isRolling: false,
       questionStartTime: null,
       usedScenarios: [],
       players: adminPlayer ? { [gameState.adminId!]: adminPlayer } : {},
-      venues: initializeVenuesForSession(adminVenueId)
+      venues: initializeVenuesForSession(adminVenueId),
     };
 
     if (questionTimers[adminVenueId]) {
@@ -421,9 +468,13 @@ io.on('connection', (socket) => {
     }
 
     // Reset global venue state for this venue
-    const venue = VENUES.find(v => v.id === adminVenueId);
+    const venue = VENUES.find((v) => v.id === adminVenueId);
     if (venue) {
-      globalVenueState.venues[adminVenueId] = { ...venue, currentPlayers: 0, players: [] };
+      globalVenueState.venues[adminVenueId] = {
+        ...venue,
+        currentPlayers: 0,
+        players: [],
+      };
     }
 
     broadcastGameStateToVenue(adminVenueId);
@@ -431,21 +482,24 @@ io.on('connection', (socket) => {
   });
 
   // Get available scenarios
-  socket.on('getAvailableScenarios', () => {
+  socket.on("getAvailableScenarios", () => {
     // Find which venue this admin manages
-    const adminVenueId = Object.keys(gameStates).find(venueId =>
-      gameStates[venueId].adminId === socket.id
+    const adminVenueId = Object.keys(gameStates).find(
+      (venueId) => gameStates[venueId].adminId === socket.id,
     );
 
     if (adminVenueId) {
-      socket.emit('availableScenarios', getAvailableScenariosForVenue(adminVenueId));
+      socket.emit(
+        "availableScenarios",
+        getAvailableScenariosForVenue(adminVenueId),
+      );
     }
   });
 
   // Disconnect handling
-  socket.on('disconnect', () => {
+  socket.on("disconnect", () => {
     // Find which venue this player/admin belongs to
-    let playerVenueId = '';
+    let playerVenueId = "";
     let player: Player | null = null;
 
     for (const venueId of Object.keys(gameStates)) {
@@ -485,7 +539,9 @@ io.on('connection', (socket) => {
       }, 30000); // 30 second grace period for reconnection
 
       broadcastGameStateToVenue(playerVenueId);
-      console.log(`Player ${player.name} disconnected from venue ${playerVenueId}`);
+      console.log(
+        `Player ${player.name} disconnected from venue ${playerVenueId}`,
+      );
     }
   });
 });
@@ -504,7 +560,7 @@ app.get("/api/game-scenarios", (req, res) => {
 app.get("/api/game-state", (req, res) => {
   // Return global venue state for initial loading
   res.json({
-    venues: globalVenueState.venues
+    venues: globalVenueState.venues,
   });
 });
 
@@ -513,7 +569,7 @@ app.get("/api/venue-game-state/:venueId", (req, res) => {
   const gameState = gameStates[venueId];
 
   if (!gameState) {
-    res.status(404).json({ error: 'Venue not found' });
+    res.status(404).json({ error: "Venue not found" });
     return;
   }
 
