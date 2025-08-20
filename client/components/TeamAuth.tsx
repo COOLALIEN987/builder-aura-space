@@ -62,6 +62,7 @@ export default function TeamAuth({
     setShowAdminPrompt(false);
     setAdminUsername('');
     setAdminPassword('');
+    setAdminSelectedVenue('');
   };
 
   return (
