@@ -82,38 +82,69 @@ export default function TeamAuth({
               <span>Admin Access</span>
             </Button>
           ) : (
-            <div className="flex items-center space-x-2">
-              <Input
-                type="text"
-                placeholder="Username"
-                value={adminUsername}
-                onChange={(e) => setAdminUsername(e.target.value)}
-                className="w-28"
-                size="sm"
-              />
-              <Input
-                type="password"
-                placeholder="Password"
-                value={adminPassword}
-                onChange={(e) => setAdminPassword(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleAdminSubmit()}
-                className="w-28"
-                size="sm"
-              />
-              <Button
-                size="sm"
-                onClick={handleAdminSubmit}
-                disabled={!adminUsername.trim() || !adminPassword.trim() || isConnecting}
-              >
-                Login
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleCancelAdmin}
-              >
-                Cancel
-              </Button>
+            <div className="space-y-3 bg-card border rounded-lg p-4">
+              <div className="text-sm font-medium">Admin Login</div>
+              <div className="grid grid-cols-1 gap-2">
+                <Input
+                  type="text"
+                  placeholder="Username"
+                  value={adminUsername}
+                  onChange={(e) => setAdminUsername(e.target.value)}
+                  size="sm"
+                />
+                <Input
+                  type="password"
+                  placeholder="Password"
+                  value={adminPassword}
+                  onChange={(e) => setAdminPassword(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleAdminSubmit()}
+                  size="sm"
+                />
+                <Select value={adminSelectedVenue} onValueChange={setAdminSelectedVenue}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select venue to manage" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.values(venues).length > 0 ? Object.values(venues).map((venue) => (
+                      <SelectItem key={venue.id} value={venue.id}>
+                        <div className="flex items-center justify-between w-full">
+                          <span>{venue.name}</span>
+                          <span className="text-xs text-muted-foreground ml-2">
+                            ({venue.currentPlayers}/{venue.maxPlayers})
+                          </span>
+                        </div>
+                      </SelectItem>
+                    )) : VENUES.map((venue) => (
+                      <SelectItem key={venue.id} value={venue.id}>
+                        <div className="flex items-center justify-between w-full">
+                          <span>{venue.name}</span>
+                          <span className="text-xs text-muted-foreground ml-2">
+                            (0/{venue.maxPlayers})
+                          </span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex space-x-2">
+                <Button
+                  size="sm"
+                  onClick={handleAdminSubmit}
+                  disabled={!adminUsername.trim() || !adminPassword.trim() || !adminSelectedVenue || isConnecting}
+                  className="flex-1"
+                >
+                  Login as Admin
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCancelAdmin}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+              </div>
             </div>
           )}
         </div>
