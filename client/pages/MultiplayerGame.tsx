@@ -45,13 +45,14 @@ export default function MultiplayerGame() {
       setGameState(newGameState);
     });
 
-    socketService.on('playerJoined', (data: { playerId: string; isAdmin: boolean }) => {
+    socketService.on('playerJoined', (data: { playerId: string; isAdmin: boolean; venueId: string }) => {
       setPlayerId(data.playerId);
       setIsAdmin(data.isAdmin);
       setIsConnecting(false);
       setError(null);
-      
+
       if (data.isAdmin) {
+        setAdminVenueId(data.venueId);
         socketService.getAvailableScenarios();
       }
     });
