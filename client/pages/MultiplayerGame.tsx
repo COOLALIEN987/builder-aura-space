@@ -24,6 +24,7 @@ export default function MultiplayerGame() {
   const [teamName, setTeamName] = useState<string>('');
   const [playerName, setPlayerName] = useState<string>('');
   const [userType, setUserType] = useState<'team' | 'admin' | null>(null);
+  const [adminVenueId, setAdminVenueId] = useState<string>('');
 
   // Initialize socket connection and fetch initial game state
   useEffect(() => {
