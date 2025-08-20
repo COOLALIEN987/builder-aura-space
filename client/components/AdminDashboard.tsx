@@ -4,19 +4,20 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { GameState, gameScenarios, Player } from '@shared/gameData';
-import { 
-  Crown, 
-  Dice6, 
-  Users, 
-  Ban, 
-  RotateCcw, 
-  Play, 
+import {
+  Crown,
+  Dice6,
+  Users,
+  Ban,
+  RotateCcw,
+  Play,
   Pause,
   Clock,
   MessageSquare,
   CheckCircle,
   XCircle,
-  AlertTriangle
+  AlertTriangle,
+  MapPin
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
