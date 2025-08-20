@@ -347,6 +347,64 @@ export default function AdminDashboard({
             </Card>
           </TabsContent>
 
+          {/* Venues Tab */}
+          <TabsContent value="venues" className="space-y-6">
+            <Card className="p-6">
+              <h3 className="text-lg font-semibold mb-4">Venue Management</h3>
+
+              <div className="grid gap-4">
+                {Object.values(gameState.venues).map((venue) => (
+                  <div
+                    key={venue.id}
+                    className="border rounded-lg p-4"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="font-medium text-lg">{venue.name}</h4>
+                      <Badge
+                        variant={venue.currentPlayers >= venue.maxPlayers ? "destructive" : "default"}
+                        className="text-xs"
+                      >
+                        {venue.currentPlayers}/{venue.maxPlayers} players
+                      </Badge>
+                    </div>
+
+                    {venue.players.length > 0 ? (
+                      <div className="space-y-2">
+                        <div className="text-sm font-medium text-muted-foreground">Players:</div>
+                        <div className="grid gap-2">
+                          {venue.players.map((playerId) => {
+                            const player = gameState.players[playerId];
+                            return player ? (
+                              <div key={playerId} className="flex items-center justify-between text-sm bg-muted rounded p-2">
+                                <div className="flex items-center space-x-2">
+                                  <div className={cn(
+                                    "w-2 h-2 rounded-full",
+                                    player.connected ? "bg-green-400" : "bg-red-400"
+                                  )} />
+                                  <span>{player.name}</span>
+                                  {player.teamName && (
+                                    <span className="text-muted-foreground">({player.teamName})</span>
+                                  )}
+                                </div>
+                                <div className="text-muted-foreground">
+                                  Score: {player.score}
+                                </div>
+                              </div>
+                            ) : null;
+                          })}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center py-4 text-muted-foreground text-sm">
+                        No players in this venue
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </TabsContent>
+
           {/* Answers Tab */}
           <TabsContent value="answers" className="space-y-6">
             <Card className="p-6">
