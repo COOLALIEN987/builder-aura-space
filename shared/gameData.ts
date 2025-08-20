@@ -367,6 +367,7 @@ export interface GameState {
   questionStartTime: number | null;
   usedScenarios: number[];
   players: Record<string, Player>;
+  venues: Record<string, Venue>;
   adminId: string | null;
   settings: {
     adminUsername: string;
