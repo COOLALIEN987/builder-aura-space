@@ -108,7 +108,7 @@ export default function AdminDashboard({
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-foreground">Monopoly Madness - Admin</h1>
-                <p className="text-muted-foreground">Full control over the Monopoly Madness game</p>
+                <p className="text-muted-foreground">Managing {venueName}</p>
               </div>
             </div>
             
