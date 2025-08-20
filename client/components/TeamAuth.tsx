@@ -4,14 +4,17 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Users, LogIn, UserPlus, Shield } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Users, LogIn, UserPlus, Shield, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { VENUES, Venue } from '@shared/gameData';
 
 interface TeamAuthProps {
-  onTeamLogin: (teamName: string, playerName: string) => void;
+  onTeamLogin: (teamName: string, playerName: string, venueId: string) => void;
   onAdminLogin: (username: string, password: string) => void;
   isConnecting: boolean;
   error: string | null;
+  venues: Record<string, Venue>;
 }
 
 export default function TeamAuth({
