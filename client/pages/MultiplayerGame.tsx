@@ -170,7 +170,13 @@ export default function MultiplayerGame() {
           onAdminLogin={handleAdminLogin}
           isConnecting={isConnecting}
           error={error}
-          venues={gameState?.venues || {}}
+          venues={gameState?.venues || {
+            'venue-1': { id: 'venue-1', name: 'Boardroom Alpha', maxPlayers: 25, currentPlayers: 0, players: [] },
+            'venue-2': { id: 'venue-2', name: 'Conference Center Beta', maxPlayers: 25, currentPlayers: 0, players: [] },
+            'venue-3': { id: 'venue-3', name: 'Executive Lounge Gamma', maxPlayers: 25, currentPlayers: 0, players: [] },
+            'venue-4': { id: 'venue-4', name: 'Strategy Suite Delta', maxPlayers: 25, currentPlayers: 0, players: [] },
+            'venue-5': { id: 'venue-5', name: 'Innovation Hub Epsilon', maxPlayers: 25, currentPlayers: 0, players: [] }
+          }}
         />
       );
     }
