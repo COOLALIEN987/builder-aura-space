@@ -17,31 +17,44 @@ const io = new Server(httpServer, {
 app.use(cors());
 app.use(express.json());
 
-// Initialize venues from template
-const initializeVenues = (): Record<string, Venue> => {
-  const venues: Record<string, Venue> = {};
-  VENUES.forEach(venue => {
-    venues[venue.id] = { ...venue, currentPlayers: 0, players: [] };
-  });
-  return venues;
+// Initialize venues from template for a single game session
+const initializeVenuesForSession = (venueId: string): Record<string, Venue> => {
+  const venue = VENUES.find(v => v.id === venueId);
+  if (!venue) return {};
+
+  return {
+    [venueId]: { ...venue, currentPlayers: 0, players: [] }
+  };
 };
 
-// Game state (in-memory for now)
-let gameState: GameState = {
-  id: 'game-1',
-  phase: 'lobby',
-  currentScenario: null,
-  diceResult: null,
-  isRolling: false,
-  questionStartTime: null,
-  usedScenarios: [],
-  players: {},
-  venues: initializeVenues(),
-  adminId: null,
-  settings: {
-    adminPassword: 'admin123',
-    maxPlayers: 50
-  }
+// Create separate game sessions for each venue
+const gameStates: Record<string, GameState> = {};
+
+VENUES.forEach(venue => {
+  gameStates[venue.id] = {
+    id: venue.id,
+    phase: 'lobby',
+    currentScenario: null,
+    diceResult: null,
+    isRolling: false,
+    questionStartTime: null,
+    usedScenarios: [],
+    players: {},
+    venues: initializeVenuesForSession(venue.id),
+    adminId: null,
+    settings: {
+      adminPassword: 'admin123',
+      maxPlayers: 25 // Each venue has 25 players max
+    }
+  };
+});
+
+// Global venue overview (for initial loading)
+const globalVenueState = {
+  venues: VENUES.reduce((acc, venue) => {
+    acc[venue.id] = { ...venue, currentPlayers: 0, players: [] };
+    return acc;
+  }, {} as Record<string, Venue>)
 };
 
 // Timer reference for auto-submitting answers
