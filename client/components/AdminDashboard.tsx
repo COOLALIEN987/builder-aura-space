@@ -72,8 +72,20 @@ export default function AdminDashboard({
   const currentScenario = gameState.currentScenario ? gameScenarios.find(s => s.id === gameState.currentScenario) : null;
   const usedCount = gameState.usedScenarios.length;
   const remainingCount = 25 - usedCount;
-  const currentVenue = gameState.venues[venueId];
-  const venueName = currentVenue?.name || 'Unknown Venue';
+  const currentVenue = gameState.venues?.[venueId];
+  const venueName = currentVenue?.name || `Venue ${venueId}` || 'Unknown Venue';
+
+  // If no venue data available, show loading or error
+  if (!venueId) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="text-center space-y-4">
+          <div className="text-2xl font-bold text-foreground">Loading Admin Panel...</div>
+          <div className="text-muted-foreground">Setting up your venue management</div>
+        </div>
+      </div>
+    );
+  }
 
   const handleRollDice = () => {
     if (selectedScenario && availableScenarios.includes(selectedScenario)) {
