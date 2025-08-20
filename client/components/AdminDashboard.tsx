@@ -146,10 +146,10 @@ export default function AdminDashboard({
 
           <Card className="p-4">
             <div className="flex items-center space-x-3">
-              <MessageSquare className="w-8 h-8 text-green-400" />
+              <MapPin className="w-8 h-8 text-green-400" />
               <div>
-                <div className="text-2xl font-bold">{playerAnswers.length}</div>
-                <div className="text-sm text-muted-foreground">Recent Answers</div>
+                <div className="text-2xl font-bold">{occupiedVenueSpots}/{totalVenueCapacity}</div>
+                <div className="text-sm text-muted-foreground">Venue Occupancy</div>
               </div>
             </div>
           </Card>
