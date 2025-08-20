@@ -40,6 +40,10 @@ export default function TeamAuth({
 
   // Get available venues (not full)
   const getAvailableVenues = () => {
+    // If no venues provided, use default venues as fallback
+    if (!venues || Object.keys(venues).length === 0) {
+      return VENUES.filter(venue => venue.currentPlayers < venue.maxPlayers);
+    }
     return Object.values(venues).filter(venue => venue.currentPlayers < venue.maxPlayers);
   };
 
