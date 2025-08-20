@@ -40,6 +40,7 @@ interface AdminDashboardProps {
 export default function AdminDashboard({
   gameState,
   playerId,
+  venueId,
   onRollDice,
   onEliminatePlayer,
   onEndQuestion,
