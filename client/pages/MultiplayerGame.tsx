@@ -248,6 +248,7 @@ export default function MultiplayerGame() {
       <AdminDashboard
         gameState={gameState}
         playerId={playerId}
+        venueId={adminVenueId}
         onRollDice={handleRollDice}
         onEliminatePlayer={handleEliminatePlayer}
         onEndQuestion={handleEndQuestion}
