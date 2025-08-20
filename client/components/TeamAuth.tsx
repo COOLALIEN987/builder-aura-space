@@ -11,7 +11,7 @@ import { VENUES, Venue } from '@shared/gameData';
 
 interface TeamAuthProps {
   onTeamLogin: (teamName: string, playerName: string, venueId: string) => void;
-  onAdminLogin: (username: string, password: string) => void;
+  onAdminLogin: (username: string, password: string, venueId: string) => void;
   isConnecting: boolean;
   error: string | null;
   venues: Record<string, Venue>;
