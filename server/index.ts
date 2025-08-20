@@ -232,10 +232,17 @@ io.on('connection', (socket) => {
 
   // Admin rolls dice
   socket.on('rollDice', (targetNumber: number) => {
-    if (socket.id !== gameState.adminId) {
-      socket.emit('error', { message: 'Only admin can roll dice' });
+    // Find which venue this admin manages
+    const adminVenueId = Object.keys(gameStates).find(venueId =>
+      gameStates[venueId].adminId === socket.id
+    );
+
+    if (!adminVenueId) {
+      socket.emit('error', { message: 'Admin not found' });
       return;
     }
+
+    const gameState = gameStates[adminVenueId];
 
     if (gameState.phase !== 'waiting') {
       socket.emit('error', { message: 'Cannot roll dice now' });
@@ -254,7 +261,7 @@ io.on('connection', (socket) => {
 
     gameState.phase = 'rolling';
     gameState.isRolling = true;
-    broadcastGameState();
+    broadcastGameStateToVenue(adminVenueId);
 
     // Dice animation duration
     setTimeout(() => {
@@ -265,10 +272,10 @@ io.on('connection', (socket) => {
       gameState.phase = 'question';
       gameState.questionStartTime = Date.now();
 
-      broadcastGameState();
+      broadcastGameStateToVenue(adminVenueId);
 
-      // Start question timer
-      questionTimer = setTimeout(endQuestion, 60000); // 60 seconds
+      // Start question timer for this venue
+      questionTimers[adminVenueId] = setTimeout(() => endQuestionForVenue(adminVenueId), 60000); // 60 seconds
     }, 3000); // 3 second dice animation
   });
 
