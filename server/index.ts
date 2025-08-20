@@ -347,42 +347,63 @@ io.on('connection', (socket) => {
 
   // Admin eliminates player
   socket.on('eliminatePlayer', (playerId: string) => {
-    if (socket.id !== gameState.adminId) {
-      socket.emit('error', { message: 'Only admin can eliminate players' });
+    // Find which venue this admin manages
+    const adminVenueId = Object.keys(gameStates).find(venueId =>
+      gameStates[venueId].adminId === socket.id
+    );
+
+    if (!adminVenueId) {
+      socket.emit('error', { message: 'Admin not found' });
       return;
     }
 
+    const gameState = gameStates[adminVenueId];
     const player = gameState.players[playerId];
+
     if (player && !player.isAdmin) {
       player.eliminated = true;
       io.to(playerId).emit('eliminated');
-      broadcastGameState();
-      console.log(`Player ${player.name} eliminated`);
+      broadcastGameStateToVenue(adminVenueId);
+      console.log(`Player ${player.name} eliminated from venue ${adminVenueId}`);
     }
   });
 
   // Admin ends current question
   socket.on('endQuestion', () => {
-    if (socket.id !== gameState.adminId) {
-      socket.emit('error', { message: 'Only admin can end questions' });
+    // Find which venue this admin manages
+    const adminVenueId = Object.keys(gameStates).find(venueId =>
+      gameStates[venueId].adminId === socket.id
+    );
+
+    if (!adminVenueId) {
+      socket.emit('error', { message: 'Admin not found' });
       return;
     }
 
+    const gameState = gameStates[adminVenueId];
+
     if (gameState.phase === 'question') {
-      endQuestion();
+      endQuestionForVenue(adminVenueId);
     }
   });
 
   // Admin resets game
   socket.on('resetGame', () => {
-    if (socket.id !== gameState.adminId) {
-      socket.emit('error', { message: 'Only admin can reset game' });
+    // Find which venue this admin manages
+    const adminVenueId = Object.keys(gameStates).find(venueId =>
+      gameStates[venueId].adminId === socket.id
+    );
+
+    if (!adminVenueId) {
+      socket.emit('error', { message: 'Admin not found' });
       return;
     }
 
+    const gameState = gameStates[adminVenueId];
+
     // Keep admin and clear everything else
-    const adminPlayer = gameState.players[gameState.adminId];
-    gameState = {
+    const adminPlayer = gameState.players[gameState.adminId!];
+    gameStates[adminVenueId] = {
       ...gameState,
       phase: 'lobby',
       currentScenario: null,
@@ -390,23 +411,34 @@ io.on('connection', (socket) => {
       isRolling: false,
       questionStartTime: null,
       usedScenarios: [],
-      players: adminPlayer ? { [gameState.adminId]: adminPlayer } : {},
-      venues: initializeVenues()
+      players: adminPlayer ? { [gameState.adminId!]: adminPlayer } : {},
+      venues: initializeVenuesForSession(adminVenueId)
     };
 
-    if (questionTimer) {
-      clearTimeout(questionTimer);
-      questionTimer = null;
+    if (questionTimers[adminVenueId]) {
+      clearTimeout(questionTimers[adminVenueId]!);
+      questionTimers[adminVenueId] = null;
     }
 
-    broadcastGameState();
-    console.log('Game reset by admin');
+    // Reset global venue state for this venue
+    const venue = VENUES.find(v => v.id === adminVenueId);
+    if (venue) {
+      globalVenueState.venues[adminVenueId] = { ...venue, currentPlayers: 0, players: [] };
+    }
+
+    broadcastGameStateToVenue(adminVenueId);
+    console.log(`Game reset by admin for venue ${adminVenueId}`);
   });
 
   // Get available scenarios
   socket.on('getAvailableScenarios', () => {
-    if (socket.id === gameState.adminId) {
-      socket.emit('availableScenarios', getAvailableScenarios());
+    // Find which venue this admin manages
+    const adminVenueId = Object.keys(gameStates).find(venueId =>
+      gameStates[venueId].adminId === socket.id
+    );
+
+    if (adminVenueId) {
+      socket.emit('availableScenarios', getAvailableScenariosForVenue(adminVenueId));
     }
   });
 
