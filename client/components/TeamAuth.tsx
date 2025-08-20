@@ -33,9 +33,14 @@ export default function TeamAuth({
   const [adminPassword, setAdminPassword] = useState('');
 
   const handleTeamSubmit = (isSignup: boolean) => {
-    if (teamName.trim() && playerName.trim()) {
-      onTeamLogin(teamName.trim(), playerName.trim());
+    if (teamName.trim() && playerName.trim() && selectedVenue) {
+      onTeamLogin(teamName.trim(), playerName.trim(), selectedVenue);
     }
+  };
+
+  // Get available venues (not full)
+  const getAvailableVenues = () => {
+    return Object.values(venues).filter(venue => venue.currentPlayers < venue.maxPlayers);
   };
 
   const handleAdminAccess = () => {
