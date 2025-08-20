@@ -43,6 +43,7 @@ export default function MultiplayerGame() {
 
     // Set up event listeners
     socketService.on('gameState', (newGameState: GameState) => {
+      console.log('Received game state:', newGameState);
       setGameState(newGameState);
     });
 
