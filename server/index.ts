@@ -127,10 +127,35 @@ io.on('connection', (socket) => {
       return;
     }
 
+    // For non-admin players, validate and assign venue
+    if (!isAdmin) {
+      if (!venueId) {
+        socket.emit('error', { message: 'Venue selection is required' });
+        return;
+      }
+
+      const venue = gameState.venues[venueId];
+      if (!venue) {
+        socket.emit('error', { message: 'Invalid venue selected' });
+        return;
+      }
+
+      if (venue.currentPlayers >= venue.maxPlayers) {
+        socket.emit('error', { message: 'Selected venue is full' });
+        return;
+      }
+
+      // Add player to venue
+      venue.players.push(socket.id);
+      venue.currentPlayers++;
+    }
+
     // Create player
     const player: Player = {
       id: socket.id,
       name,
+      teamName,
+      venueId: isAdmin ? undefined : venueId,
       isAdmin,
       connected: true,
       answers: [],
