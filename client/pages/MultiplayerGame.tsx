@@ -25,8 +25,18 @@ export default function MultiplayerGame() {
   const [playerName, setPlayerName] = useState<string>('');
   const [userType, setUserType] = useState<'team' | 'admin' | null>(null);
 
-  // Initialize socket connection
+  // Initialize socket connection and fetch initial game state
   useEffect(() => {
+    // Fetch initial game state for venues
+    fetch('/api/game-state')
+      .then(res => res.json())
+      .then(initialGameState => {
+        setGameState(initialGameState);
+      })
+      .catch(err => {
+        console.error('Failed to fetch initial game state:', err);
+      });
+
     socketService.connect();
 
     // Set up event listeners
