@@ -281,7 +281,19 @@ io.on('connection', (socket) => {
 
   // Player submits answer
   socket.on('submitAnswer', (answer: AnswerSubmission) => {
+    // Find which venue this player belongs to
+    const playerVenueId = Object.keys(gameStates).find(venueId =>
+      gameStates[venueId].players[socket.id]
+    );
+
+    if (!playerVenueId) {
+      socket.emit('error', { message: 'Player not found in any venue' });
+      return;
+    }
+
+    const gameState = gameStates[playerVenueId];
     const player = gameState.players[socket.id];
+
     if (!player || player.eliminated) {
       socket.emit('error', { message: 'Player not found or eliminated' });
       return;
@@ -324,13 +336,13 @@ io.on('connection', (socket) => {
     player.score += 10;
 
     socket.emit('answerSubmitted');
-    broadcastToAdmin('playerAnswered', {
+    broadcastToVenueAdmin(playerVenueId, 'playerAnswered', {
       playerId: socket.id,
       playerName: player.name,
       answer: answer
     });
 
-    console.log(`Player ${player.name} submitted answer for scenario ${answer.scenarioId}`);
+    console.log(`Player ${player.name} in venue ${playerVenueId} submitted answer for scenario ${answer.scenarioId}`);
   });
 
   // Admin eliminates player
