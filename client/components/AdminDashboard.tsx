@@ -24,6 +24,7 @@ import { cn } from '@/lib/utils';
 interface AdminDashboardProps {
   gameState: GameState;
   playerId: string;
+  venueId: string;
   onRollDice: (targetNumber: number) => void;
   onEliminatePlayer: (playerId: string) => void;
   onEndQuestion: () => void;
