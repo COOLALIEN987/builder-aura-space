@@ -21,10 +21,12 @@ export default function TeamAuth({
   onTeamLogin,
   onAdminLogin,
   isConnecting,
-  error
+  error,
+  venues
 }: TeamAuthProps) {
   const [teamName, setTeamName] = useState('');
   const [playerName, setPlayerName] = useState('');
+  const [selectedVenue, setSelectedVenue] = useState('');
   const [activeTab, setActiveTab] = useState('login');
   const [showAdminPrompt, setShowAdminPrompt] = useState(false);
   const [adminUsername, setAdminUsername] = useState('');
