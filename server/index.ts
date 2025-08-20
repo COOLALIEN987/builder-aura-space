@@ -335,12 +335,28 @@ io.on('connection', (socket) => {
     const player = gameState.players[socket.id];
     if (player) {
       player.connected = false;
-      
+
       // If admin disconnects, clear admin
       if (player.isAdmin) {
         gameState.adminId = null;
+      } else if (player.venueId) {
+        // Remove player from venue
+        const venue = gameState.venues[player.venueId];
+        if (venue) {
+          const playerIndex = venue.players.indexOf(socket.id);
+          if (playerIndex > -1) {
+            venue.players.splice(playerIndex, 1);
+            venue.currentPlayers--;
+          }
+        }
       }
-      
+
+      // Remove disconnected player from game state after a delay
+      setTimeout(() => {
+        delete gameState.players[socket.id];
+        broadcastGameState();
+      }, 30000); // 30 second grace period for reconnection
+
       broadcastGameState();
       console.log(`Player ${player.name} disconnected`);
     }
