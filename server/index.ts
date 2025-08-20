@@ -311,7 +311,8 @@ io.on('connection', (socket) => {
       isRolling: false,
       questionStartTime: null,
       usedScenarios: [],
-      players: adminPlayer ? { [gameState.adminId]: adminPlayer } : {}
+      players: adminPlayer ? { [gameState.adminId]: adminPlayer } : {},
+      venues: initializeVenues()
     };
 
     if (questionTimer) {
