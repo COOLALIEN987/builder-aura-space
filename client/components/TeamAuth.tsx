@@ -53,8 +53,8 @@ export default function TeamAuth({
   };
 
   const handleAdminSubmit = () => {
-    if (adminUsername.trim() && adminPassword.trim()) {
-      onAdminLogin(adminUsername.trim(), adminPassword.trim());
+    if (adminUsername.trim() && adminPassword.trim() && adminSelectedVenue) {
+      onAdminLogin(adminUsername.trim(), adminPassword.trim(), adminSelectedVenue);
     }
   };
 
