@@ -270,9 +270,9 @@ export default function TeamAuth({
                 </div>
               </div>
               
-              <Button 
+              <Button
                 onClick={() => handleTeamSubmit(true)}
-                disabled={!teamName.trim() || !playerName.trim() || isConnecting}
+                disabled={!teamName.trim() || !playerName.trim() || !selectedVenue || isConnecting || getAvailableVenues().length === 0}
                 className="w-full"
                 size="lg"
                 variant="outline"
