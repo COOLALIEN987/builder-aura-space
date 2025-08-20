@@ -170,10 +170,9 @@ export default function AdminDashboard({
         </div>
 
         <Tabs defaultValue="control" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="control">Game Control</TabsTrigger>
             <TabsTrigger value="players">Player Management</TabsTrigger>
-            <TabsTrigger value="venues">Venues</TabsTrigger>
             <TabsTrigger value="answers">Live Answers</TabsTrigger>
           </TabsList>
 
