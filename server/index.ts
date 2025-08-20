@@ -66,17 +66,33 @@ VENUES.forEach(venue => {
 // Helper functions
 const generatePlayerId = () => Math.random().toString(36).substr(2, 9);
 
-const broadcastGameState = () => {
-  io.emit('gameState', gameState);
+const broadcastGameStateToVenue = (venueId: string) => {
+  const gameState = gameStates[venueId];
+  if (!gameState) return;
+
+  // Emit to all players in this venue
+  Object.keys(gameState.players).forEach(playerId => {
+    io.to(playerId).emit('gameState', gameState);
+  });
+
+  // Update global venue state
+  const venue = gameState.venues[venueId];
+  if (venue) {
+    globalVenueState.venues[venueId] = venue;
+  }
 };
 
-const broadcastToAdmin = (event: string, data: any) => {
-  if (gameState.adminId) {
+const broadcastToVenueAdmin = (venueId: string, event: string, data: any) => {
+  const gameState = gameStates[venueId];
+  if (gameState && gameState.adminId) {
     io.to(gameState.adminId).emit(event, data);
   }
 };
 
-const getAvailableScenarios = () => {
+const getAvailableScenariosForVenue = (venueId: string) => {
+  const gameState = gameStates[venueId];
+  if (!gameState) return [];
+
   return Array.from({ length: 25 }, (_, i) => i + 1).filter(
     id => !gameState.usedScenarios.includes(id)
   );
