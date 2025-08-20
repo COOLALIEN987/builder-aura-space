@@ -139,8 +139,8 @@ io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 
   // Player joins game
-  socket.on('joinGame', (data: { name: string; teamName?: string; venueId?: string; isAdmin?: boolean; adminPassword?: string }) => {
-    const { name, teamName, venueId, isAdmin = false, adminPassword } = data;
+  socket.on('joinGame', (data: { name: string; teamName?: string; venueId?: string; isAdmin?: boolean; adminPassword?: string; adminVenueId?: string }) => {
+    const { name, teamName, venueId, isAdmin = false, adminPassword, adminVenueId } = data;
 
     // Validate admin
     if (isAdmin) {
