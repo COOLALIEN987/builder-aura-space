@@ -168,10 +168,19 @@ io.on('connection', (socket) => {
       gameState.adminId = socket.id;
     }
 
-    // Check if game is full
+    // Determine which venue's game session to use
+    const targetVenueId = isAdmin ? adminVenueId! : venueId!;
+    const gameState = gameStates[targetVenueId];
+
+    if (!gameState) {
+      socket.emit('error', { message: 'Invalid venue selected' });
+      return;
+    }
+
+    // Check if venue game is full
     const playerCount = Object.keys(gameState.players).length;
     if (!isAdmin && playerCount >= gameState.settings.maxPlayers) {
-      socket.emit('error', { message: 'Game is full' });
+      socket.emit('error', { message: 'This venue is full' });
       return;
     }
 
@@ -196,6 +205,9 @@ io.on('connection', (socket) => {
       // Add player to venue
       venue.players.push(socket.id);
       venue.currentPlayers++;
+
+      // Update global venue state
+      globalVenueState.venues[venueId] = { ...venue };
     }
 
     // Create player
@@ -203,7 +215,7 @@ io.on('connection', (socket) => {
       id: socket.id,
       name,
       teamName,
-      venueId: isAdmin ? undefined : venueId,
+      venueId: isAdmin ? adminVenueId : venueId,
       isAdmin,
       connected: true,
       answers: [],
@@ -212,10 +224,10 @@ io.on('connection', (socket) => {
     };
 
     gameState.players[socket.id] = player;
-    socket.emit('playerJoined', { playerId: socket.id, isAdmin });
-    broadcastGameState();
+    socket.emit('playerJoined', { playerId: socket.id, isAdmin, venueId: targetVenueId });
+    broadcastGameStateToVenue(targetVenueId);
 
-    console.log(`${isAdmin ? 'Admin' : 'Player'} joined:`, name);
+    console.log(`${isAdmin ? 'Admin' : 'Player'} joined venue ${targetVenueId}:`, name);
   });
 
   // Admin rolls dice
