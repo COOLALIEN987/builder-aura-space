@@ -502,6 +502,21 @@ app.get("/api/game-scenarios", (req, res) => {
 });
 
 app.get("/api/game-state", (req, res) => {
+  // Return global venue state for initial loading
+  res.json({
+    venues: globalVenueState.venues
+  });
+});
+
+app.get("/api/venue-game-state/:venueId", (req, res) => {
+  const { venueId } = req.params;
+  const gameState = gameStates[venueId];
+
+  if (!gameState) {
+    res.status(404).json({ error: 'Venue not found' });
+    return;
+  }
+
   res.json(gameState);
 });
 
