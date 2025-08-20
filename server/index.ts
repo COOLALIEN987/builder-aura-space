@@ -444,11 +444,23 @@ io.on('connection', (socket) => {
 
   // Disconnect handling
   socket.on('disconnect', () => {
-    const player = gameState.players[socket.id];
-    if (player) {
+    // Find which venue this player/admin belongs to
+    let playerVenueId = '';
+    let player: Player | null = null;
+
+    for (const venueId of Object.keys(gameStates)) {
+      if (gameStates[venueId].players[socket.id]) {
+        playerVenueId = venueId;
+        player = gameStates[venueId].players[socket.id];
+        break;
+      }
+    }
+
+    if (player && playerVenueId) {
+      const gameState = gameStates[playerVenueId];
       player.connected = false;
 
-      // If admin disconnects, clear admin
+      // If admin disconnects, clear admin for this venue
       if (player.isAdmin) {
         gameState.adminId = null;
       } else if (player.venueId) {
@@ -461,16 +473,19 @@ io.on('connection', (socket) => {
             venue.currentPlayers--;
           }
         }
+
+        // Update global venue state
+        globalVenueState.venues[player.venueId] = { ...venue };
       }
 
       // Remove disconnected player from game state after a delay
       setTimeout(() => {
         delete gameState.players[socket.id];
-        broadcastGameState();
+        broadcastGameStateToVenue(playerVenueId);
       }, 30000); // 30 second grace period for reconnection
 
-      broadcastGameState();
-      console.log(`Player ${player.name} disconnected`);
+      broadcastGameStateToVenue(playerVenueId);
+      console.log(`Player ${player.name} disconnected from venue ${playerVenueId}`);
     }
   });
 });
