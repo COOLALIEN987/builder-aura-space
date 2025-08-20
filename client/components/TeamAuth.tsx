@@ -31,6 +31,7 @@ export default function TeamAuth({
   const [showAdminPrompt, setShowAdminPrompt] = useState(false);
   const [adminUsername, setAdminUsername] = useState('');
   const [adminPassword, setAdminPassword] = useState('');
+  const [adminSelectedVenue, setAdminSelectedVenue] = useState('');
 
   const handleTeamSubmit = (isSignup: boolean) => {
     if (teamName.trim() && playerName.trim() && selectedVenue) {
