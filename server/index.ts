@@ -17,6 +17,15 @@ const io = new Server(httpServer, {
 app.use(cors());
 app.use(express.json());
 
+// Initialize venues from template
+const initializeVenues = (): Record<string, Venue> => {
+  const venues: Record<string, Venue> = {};
+  VENUES.forEach(venue => {
+    venues[venue.id] = { ...venue, currentPlayers: 0, players: [] };
+  });
+  return venues;
+};
+
 // Game state (in-memory for now)
 let gameState: GameState = {
   id: 'game-1',
@@ -27,6 +36,7 @@ let gameState: GameState = {
   questionStartTime: null,
   usedScenarios: [],
   players: {},
+  venues: initializeVenues(),
   adminId: null,
   settings: {
     adminPassword: 'admin123',
