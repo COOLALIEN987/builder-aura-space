@@ -72,8 +72,8 @@ export default function AdminDashboard({
   const currentScenario = gameState.currentScenario ? gameScenarios.find(s => s.id === gameState.currentScenario) : null;
   const usedCount = gameState.usedScenarios.length;
   const remainingCount = 25 - usedCount;
-  const totalVenueCapacity = Object.values(gameState.venues).reduce((sum, venue) => sum + venue.maxPlayers, 0);
-  const occupiedVenueSpots = Object.values(gameState.venues).reduce((sum, venue) => sum + venue.currentPlayers, 0);
+  const currentVenue = gameState.venues[venueId];
+  const venueName = currentVenue?.name || 'Unknown Venue';
 
   const handleRollDice = () => {
     if (selectedScenario && availableScenarios.includes(selectedScenario)) {
