@@ -57,8 +57,11 @@ const globalVenueState = {
   }, {} as Record<string, Venue>)
 };
 
-// Timer reference for auto-submitting answers
-let questionTimer: NodeJS.Timeout | null = null;
+// Timer references for auto-submitting answers (one per venue)
+const questionTimers: Record<string, NodeJS.Timeout | null> = {};
+VENUES.forEach(venue => {
+  questionTimers[venue.id] = null;
+});
 
 // Helper functions
 const generatePlayerId = () => Math.random().toString(36).substr(2, 9);
