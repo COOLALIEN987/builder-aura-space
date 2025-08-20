@@ -325,10 +325,27 @@ export const gameScenarios: GameScenario[] = [
   },
 ];
 
+export interface Venue {
+  id: string;
+  name: string;
+  maxPlayers: number;
+  currentPlayers: number;
+  players: string[]; // Player IDs
+}
+
+export const VENUES: Venue[] = [
+  { id: 'venue-1', name: 'Boardroom Alpha', maxPlayers: 5, currentPlayers: 0, players: [] },
+  { id: 'venue-2', name: 'Conference Center Beta', maxPlayers: 5, currentPlayers: 0, players: [] },
+  { id: 'venue-3', name: 'Executive Lounge Gamma', maxPlayers: 5, currentPlayers: 0, players: [] },
+  { id: 'venue-4', name: 'Strategy Suite Delta', maxPlayers: 5, currentPlayers: 0, players: [] },
+  { id: 'venue-5', name: 'Innovation Hub Epsilon', maxPlayers: 5, currentPlayers: 0, players: [] },
+];
+
 export interface Player {
   id: string;
   name: string;
   teamName?: string;
+  venueId?: string;
   isAdmin: boolean;
   connected: boolean;
   answers: Array<{
